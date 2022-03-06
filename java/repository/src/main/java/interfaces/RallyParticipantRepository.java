@@ -1,6 +1,6 @@
-package repository.interfaces;
+package interfaces;
 
-import domain.models.RallyParticipant;
+import models.RallyParticipant;
 
 public interface RallyParticipantRepository extends Repository<Long, RallyParticipant> {
 }

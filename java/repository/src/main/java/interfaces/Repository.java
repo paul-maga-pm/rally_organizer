@@ -1,6 +1,6 @@
-package repository.interfaces;
+package interfaces;
 
-import domain.models.Identifiable;
+import models.Identifiable;
 
 import java.util.Collection;
 import java.util.Optional;

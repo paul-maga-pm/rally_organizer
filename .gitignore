@@ -4,3 +4,6 @@ build/
 gradle/
 gradlew
 gradlew.bat
+obj/
+bin/
+.vs/

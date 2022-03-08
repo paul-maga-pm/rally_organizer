@@ -5,12 +5,12 @@ import java.util.Objects;
 public class RallyParticipant extends Identifiable<Long> {
     private String firstName;
     private String lastName;
-    private Long teamId;
-    private Long rallyId;
+    private RallyTeam team;
+    private Rally rally;
 
-    public RallyParticipant(Long teamId, Long rallyId, String firstName, String lastName) {
-        this.teamId = teamId;
-        this.rallyId = rallyId;
+    public RallyParticipant(RallyTeam team, Rally rally, String firstName, String lastName) {
+        this.team = team;
+        this.rally = rally;
         this.firstName = firstName;
         this.lastName = lastName;
     }
@@ -23,12 +23,12 @@ public class RallyParticipant extends Identifiable<Long> {
         return lastName;
     }
 
-    public Long getTeamId() {
-        return teamId;
+    public RallyTeam getTeam() {
+        return team;
     }
 
-    public Long getRallyId() {
-        return rallyId;
+    public Rally getRally() {
+        return rally;
     }
 
     @Override
@@ -39,12 +39,12 @@ public class RallyParticipant extends Identifiable<Long> {
         RallyParticipant that = (RallyParticipant) o;
         return Objects.equals(firstName, that.firstName) &&
                 Objects.equals(lastName, that.lastName) &&
-                Objects.equals(teamId, that.teamId) &&
-                Objects.equals(rallyId, that.rallyId);
+                Objects.equals(team, that.team) &&
+                Objects.equals(rally, that.rally);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), firstName, lastName, teamId, rallyId);
+        return Objects.hash(super.hashCode(), firstName, lastName, team, rally);
     }
 }

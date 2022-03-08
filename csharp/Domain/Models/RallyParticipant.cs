@@ -11,15 +11,15 @@ namespace Domain.Models
         public String FirstName { get; set; }
         public String LastName { get; set; }
 
-        public long RallyId { get; set; }
-        public long TeamId { get; set; }
+        public Rally Rally { get; set; }
+        public RallyTeam Team { get; set; }
 
-        public RallyParticipant(long rallyId, long teamId, String firstName, String lastName)
+        public RallyParticipant(Rally rally, RallyTeam team, String firstName, String lastName)
         {
             FirstName = firstName;
             LastName = lastName;
-            RallyId = rallyId;
-            TeamId = teamId;
+            Rally = rally;
+            Team = team;
         }
 
         public override bool Equals(object? obj)
@@ -29,13 +29,13 @@ namespace Domain.Models
                    Id == participant.Id &&
                    FirstName == participant.FirstName &&
                    LastName == participant.LastName &&
-                   RallyId == participant.RallyId &&
-                   TeamId == participant.TeamId;
+                   Rally == participant.Rally &&
+                   Team == participant.Team;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(base.GetHashCode(), Id, FirstName, LastName, RallyId, TeamId);
+            return HashCode.Combine(base.GetHashCode(), Id, FirstName, LastName, Rally, Team);
         }
     }
 }

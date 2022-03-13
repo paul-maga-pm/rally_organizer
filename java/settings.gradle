@@ -1,4 +1,6 @@
 rootProject.name = 'java'
 include 'domain'
 include 'repository'
+include 'exceptions'
+include 'exceptions'
 

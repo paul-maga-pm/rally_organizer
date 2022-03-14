@@ -1,16 +1,15 @@
 ﻿using Domain;
 using Domain.Models;
+using Exceptions;
+using System.Runtime.Serialization;
 
 namespace Repository
 {
-    public interface IRepository<ID, E> where E : Identifiable<ID>
+    public interface IRepository<ID, M> where M : Identifiable<ID>
     {
-        E Add(E model);
-        E Remove(ID id);
-        E FindById(ID id);
-        
-        ICollection<E> GetAll();
+        M Add(M model);
+        IEnumerable<M> FindAll();
+        M FindOne(M model);
 
-        bool Update(E model);
     }
 }

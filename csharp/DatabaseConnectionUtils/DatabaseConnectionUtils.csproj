@@ -10,10 +10,4 @@
     <PackageReference Include="Npgsql" Version="6.0.3" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\DatabaseConnectionUtils\DatabaseConnectionUtils.csproj" />
-    <ProjectReference Include="..\Domain\Domain.csproj" />
-    <ProjectReference Include="..\Exceptions\Exceptions.csproj" />
-  </ItemGroup>
-
 </Project>

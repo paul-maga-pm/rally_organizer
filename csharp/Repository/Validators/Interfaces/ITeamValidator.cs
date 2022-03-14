@@ -5,9 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Repository.Interfaces
+namespace Repository.Validators.Interfaces
 {
-    public interface IRallyTeamRepository : IRepository<long, RallyTeam>
+    public interface ITeamValidator : IValidator<long, Team>
     {
+
     }
 }

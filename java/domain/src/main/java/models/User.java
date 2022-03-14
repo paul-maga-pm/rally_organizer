@@ -11,6 +11,11 @@ public class User extends Identifiable<Long> {
         this.password = password;
     }
 
+    public User(User other) {
+        this.userName = other.userName;
+        this.password = other.password;
+    }
+
     public String getUserName() {
         return userName;
     }

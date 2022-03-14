@@ -7,3 +7,6 @@ gradlew.bat
 obj/
 bin/
 .vs/
+
+*.log
+logs/

@@ -2,13 +2,12 @@ package database;
 
 import interfaces.RallyRepository;
 import models.Rally;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import utils.JdbcUtils;
 import validators.database.RallyDatabaseValidator;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -19,84 +18,86 @@ public class RallyDatabaseRepository implements RallyRepository {
 
     private RallyDatabaseValidator rallyValidator = new RallyDatabaseValidator();
 
-    private PreparedStatement insertRallyPreparedStatement;
-    private PreparedStatement findAllRalliesPreparedStatement;
-    private PreparedStatement findByEngineCapacityPreparedStatement;
+
+    private static final String INSERT_RALLY_SQL_STRING = "insert into rallies(engine_capacity) values (?)";
+    private static final String FIND_ALL_RALLIES_SQL_STRING = "select rally_id, engine_capacity, number_of_participants from rallies";
+    private static final String FIND_BY_ENGINE_CAPACITY_SQL_STRING = "select rally_id, engine_capacity, number_of_participants from rallies where engine_capacity=?";
+
+    private Logger logger = LogManager.getLogger();
 
     public RallyDatabaseRepository(Properties databaseConnectionProperties) {
+        logger.info("Creating rally database repository...");
         this.jdbcUtils = new JdbcUtils(databaseConnectionProperties);
-        initializePreparedStatements();
+        logger.info("Rally database repository created");
     }
 
     @Override
     public Rally save(Rally model) {
+        logger.traceEntry("Saving rally {}", model);
         rallyValidator.validate(model);
 
         var existingRally = findByEngineCapacity(model.getEngineCapacity());
-        if (existingRally != null)
+        if (existingRally != null) {
+            logger.traceExit("Rally {} already exists", existingRally);
             return existingRally;
+        }
 
-        try {
+        try(Connection connection = jdbcUtils.getConnection();
+            PreparedStatement insertRallyPreparedStatement =
+                    connection.prepareStatement(INSERT_RALLY_SQL_STRING, Statement.RETURN_GENERATED_KEYS)) {
+
             insertRallyPreparedStatement.setInt(1, model.getEngineCapacity());
             insertRallyPreparedStatement.executeUpdate();
-
             try(ResultSet generatedKeys = insertRallyPreparedStatement.getGeneratedKeys()) {
+
                 if (generatedKeys.next()) {
                     Long generatedId = generatedKeys.getLong(1);
                     Rally rallyWithId = new Rally(model);
                     rallyWithId.setId(generatedId);
+                    logger.traceExit("New rally created {}", rallyWithId);
                     return rallyWithId;
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
+        logger.traceExit("Null rally returned");
         return null;
     }
 
-    @Override
-    public Rally findOne(Long modelID) {
-        throw new NotImplementedRepositoryMethodException();
-    }
 
     @Override
     public Iterable<Rally> findAll() {
+        logger.traceEntry("Finding all rallies...");
         List<Rally> allRallies = new ArrayList<>();
 
-        try(ResultSet foundRallies = findAllRalliesPreparedStatement.executeQuery()) {
-            while (foundRallies.next()) {
-                Long rallyId = foundRallies.getLong("rally_id");
-                int engineCapacity = foundRallies.getInt("engine_capacity");
-                int numberOfParticipants = foundRallies.getInt("number_of_participants");
-                Rally currentRally = new Rally(engineCapacity, numberOfParticipants);
-                currentRally.setId(rallyId);
-                allRallies.add(currentRally);
+        try(Connection connection = jdbcUtils.getConnection();
+            PreparedStatement findAllRalliesPreparedStatement = connection.prepareStatement(FIND_ALL_RALLIES_SQL_STRING)) {
+            try (ResultSet foundRallies = findAllRalliesPreparedStatement.executeQuery()) {
+                while (foundRallies.next()) {
+                    Long rallyId = foundRallies.getLong("rally_id");
+                    int engineCapacity = foundRallies.getInt("engine_capacity");
+                    int numberOfParticipants = foundRallies.getInt("number_of_participants");
+                    Rally currentRally = new Rally(engineCapacity, numberOfParticipants);
+                    currentRally.setId(rallyId);
+                    allRallies.add(currentRally);
+                }
             }
         } catch (SQLException exception) {
-            exception.printStackTrace();
+            logger.error(exception);
         }
+        logger.traceExit();
         return allRallies;
     }
 
-    private void initializePreparedStatements() {
-        String insertRallySqlString = "insert into rallies(engine_capacity) values (?)";
-        String findAllRalliesSqlString = "select rally_id, engine_capacity, number_of_participants from rallies";
-        String findByEngineCapacitySqlString = "select rally_id, engine_capacity, number_of_participants from rallies where engine_capacity=?";
 
-        try {
-            insertRallyPreparedStatement = jdbcUtils.getConnection().prepareStatement(insertRallySqlString, Statement.RETURN_GENERATED_KEYS);
-            findAllRalliesPreparedStatement = jdbcUtils.getConnection().prepareStatement(findAllRalliesSqlString);
-            findByEngineCapacityPreparedStatement = jdbcUtils.getConnection().prepareStatement(findByEngineCapacitySqlString);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-    }
 
     @Override
     public Rally findByEngineCapacity(int engineCapacity) {
+        logger.traceEntry("Finding one rally by engine capacity...");
         Rally existingRally = null;
-        try {
+        try(Connection connection = jdbcUtils.getConnection();
+            PreparedStatement findByEngineCapacityPreparedStatement = connection.prepareStatement(FIND_BY_ENGINE_CAPACITY_SQL_STRING)) {
             findByEngineCapacityPreparedStatement.setInt(1, engineCapacity);
             try(ResultSet resultSet = findByEngineCapacityPreparedStatement.executeQuery()) {
                 if (resultSet.next()) {
@@ -108,9 +109,14 @@ public class RallyDatabaseRepository implements RallyRepository {
                 }
             }
         } catch (SQLException exception) {
-            exception.printStackTrace();
+            logger.error(exception);
         }
-
+        logger.traceExit("{} has been returned");
         return existingRally;
+    }
+
+    @Override
+    public Rally findOne(Long modelID) {
+        throw new NotImplementedRepositoryMethodException();
     }
 }

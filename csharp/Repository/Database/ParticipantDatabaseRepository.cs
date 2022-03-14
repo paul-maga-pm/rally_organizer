@@ -1,5 +1,6 @@
 ﻿using DatabaseConnectionFactories;
 using Domain.Models;
+using log4net;
 using Repository.Interfaces;
 using Repository.Utils;
 using Repository.Validators.Database.Postgresql;
@@ -15,6 +16,8 @@ namespace Repository.Database
     {
         private ParticipantDatabaseValidator validator;
         private DatabaseUtils databaseUtils;
+
+        private static readonly ILog log = LogManager.GetLogger("ParticipantDatabaseRepository");
 
         private static readonly String INSERT_PARTICIPANT_SQL_STRING =
             "insert into participants(participant_name, team_id, rally_id) " +
@@ -40,112 +43,139 @@ namespace Repository.Database
 
         public ParticipantDatabaseRepository(IDictionary<String, String> databaseConnectionProperties)
         {
+            log.Info("Creating repository...");
             this.databaseUtils = new DatabaseUtils(databaseConnectionProperties);
             validator = new ParticipantDatabaseValidator(databaseConnectionProperties);
+            log.Info("Repository created!");
         }
 
         public Participant Add(Participant model)
         {
+            log.Info("Adding participant: " + model.ToString());
             validator.Validate(model);
 
             var existingParticipant = FindParticipantByName(model.Name);
             if (existingParticipant != null)
                 return existingParticipant;
 
-            using(var connection = databaseUtils.GetConnection())
+            Participant savedParticipant = null;
+            try
             {
-                using (var insertParticipantCommand = connection.CreateCommand())
-                using (var updateParticipantsNoCommand = connection.CreateCommand())
+                using (var connection = databaseUtils.GetConnection())
                 {
-                    var participantNameParam = insertParticipantCommand.CreateParameter();
-                    participantNameParam.ParameterName = "@participant_name_param";
-                    participantNameParam.Value = model.Name;
-
-                    var teamIdParam = insertParticipantCommand.CreateParameter();
-                    teamIdParam.ParameterName = "@team_id_param";
-                    teamIdParam.Value = model.Team.Id;
-
-                    var rallyIdParam = insertParticipantCommand.CreateParameter();
-                    rallyIdParam.ParameterName = "@rally_id_param";
-                    rallyIdParam.Value = model.Rally.Id;
-
-                    insertParticipantCommand.Parameters.Add(participantNameParam);
-                    insertParticipantCommand.Parameters.Add(teamIdParam);
-                    insertParticipantCommand.Parameters.Add(rallyIdParam);
-
-                    var rallyUpdateIdParam = updateParticipantsNoCommand.CreateParameter();
-                    rallyUpdateIdParam.ParameterName = "@rally_id_param";
-                    rallyUpdateIdParam.Value = model.Rally.Id;
-
-                    updateParticipantsNoCommand.Parameters.Add(rallyUpdateIdParam);
-
-                    insertParticipantCommand.CommandText = INSERT_PARTICIPANT_SQL_STRING;
-                    updateParticipantsNoCommand.CommandText = INCREMENT_NUMBER_OF_PARTICIPANTS_FOR_RALLY_SQL_STRING;
-                    var transaction = connection.BeginTransaction();
-                    try
+                    using (var insertParticipantCommand = connection.CreateCommand())
+                    using (var updateParticipantsNoCommand = connection.CreateCommand())
                     {
-                        insertParticipantCommand.ExecuteNonQuery();
-                        updateParticipantsNoCommand.ExecuteNonQuery();
-                        transaction.Commit();
-                        existingParticipant = FindParticipantByName(model.Name);
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        Console.WriteLine(ex.ToString());
+                        var participantNameParam = insertParticipantCommand.CreateParameter();
+                        participantNameParam.ParameterName = "@participant_name_param";
+                        participantNameParam.Value = model.Name;
+
+                        var teamIdParam = insertParticipantCommand.CreateParameter();
+                        teamIdParam.ParameterName = "@team_id_param";
+                        teamIdParam.Value = model.Team.Id;
+
+                        var rallyIdParam = insertParticipantCommand.CreateParameter();
+                        rallyIdParam.ParameterName = "@rally_id_param";
+                        rallyIdParam.Value = model.Rally.Id;
+
+                        insertParticipantCommand.Parameters.Add(participantNameParam);
+                        insertParticipantCommand.Parameters.Add(teamIdParam);
+                        insertParticipantCommand.Parameters.Add(rallyIdParam);
+
+                        var rallyUpdateIdParam = updateParticipantsNoCommand.CreateParameter();
+                        rallyUpdateIdParam.ParameterName = "@rally_id_param";
+                        rallyUpdateIdParam.Value = model.Rally.Id;
+
+                        updateParticipantsNoCommand.Parameters.Add(rallyUpdateIdParam);
+
+                        insertParticipantCommand.CommandText = INSERT_PARTICIPANT_SQL_STRING;
+                        updateParticipantsNoCommand.CommandText = INCREMENT_NUMBER_OF_PARTICIPANTS_FOR_RALLY_SQL_STRING;
+                        var transaction = connection.BeginTransaction();
+                        try
+                        {
+                            insertParticipantCommand.ExecuteNonQuery();
+                            updateParticipantsNoCommand.ExecuteNonQuery();
+                            transaction.Commit();
+                            savedParticipant = FindParticipantByName(model.Name);
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            Console.WriteLine(ex.ToString());
+                        }
                     }
                 }
             }
-            return existingParticipant;
+            catch(Exception ex)
+            {
+                log.Error(ex.Message, ex);
+            }
+            return savedParticipant;
         }
 
         public ICollection<Participant> FindMembersOfTeam(string teamName)
         {
+            log.Info("Searching for members of team " + teamName);
             ICollection<Participant> participants = new List<Participant>();
-            using(var connection = databaseUtils.GetConnection())
+            try
             {
-                using(var command = connection.CreateCommand())
+                using (var connection = databaseUtils.GetConnection())
                 {
-                    var teamNameParam = command.CreateParameter();
-                    teamNameParam.ParameterName = "@team_name_param";
-                    teamNameParam.Value = teamName;
-
-                    command.Parameters.Add(teamNameParam);
-                    command.CommandText = FIND_PARTICIPANTS_BY_TEAM_NAME_SQL_STRING;
-
-                    using(var reader = command.ExecuteReader())
+                    using (var command = connection.CreateCommand())
                     {
-                        while(reader.Read())
-                            participants.Add(GetCurrentParticipantFromReader(reader));
+                        var teamNameParam = command.CreateParameter();
+                        teamNameParam.ParameterName = "@team_name_param";
+                        teamNameParam.Value = teamName;
+
+                        command.Parameters.Add(teamNameParam);
+                        command.CommandText = FIND_PARTICIPANTS_BY_TEAM_NAME_SQL_STRING;
+
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                                participants.Add(GetCurrentParticipantFromReader(reader));
+                        }
                     }
                 }
             }
+            catch(Exception exception)
+            {
+                log.Error(exception.Message, exception);
+            }
+
             return participants;
         }
         public Participant FindParticipantByName(string participantName)
         {
+            log.Info("Searching for participant by name " + participantName);
             Participant existingParticipant = null;
 
-            using (var connection = databaseUtils.GetConnection())
+            try
             {
-                using (var command = connection.CreateCommand())
+                using (var connection = databaseUtils.GetConnection())
                 {
-                    var participantNameParam = command.CreateParameter();
-                    participantNameParam.ParameterName = "@participant_name_param";
-                    participantNameParam.Value = participantName;
-
-                    command.Parameters.Add(participantNameParam);
-
-                    command.CommandText = FIND_PARTICIPANT_BY_NAME_SQL_STRING;
-
-                    using (var reader = command.ExecuteReader())
+                    using (var command = connection.CreateCommand())
                     {
-                        if (reader.Read())
-                            existingParticipant = GetCurrentParticipantFromReader(reader);
+                        var participantNameParam = command.CreateParameter();
+                        participantNameParam.ParameterName = "@participant_name_param";
+                        participantNameParam.Value = participantName;
+
+                        command.Parameters.Add(participantNameParam);
+
+                        command.CommandText = FIND_PARTICIPANT_BY_NAME_SQL_STRING;
+
+                        using (var reader = command.ExecuteReader())
+                        {
+                            if (reader.Read())
+                                existingParticipant = GetCurrentParticipantFromReader(reader);
+                        }
                     }
                 }
             }
-
+            catch (Exception exception)
+            {
+                log.Error(exception.Message, exception);
+            }
             return existingParticipant;
         }
 

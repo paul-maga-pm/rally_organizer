@@ -1,8 +1,11 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using Domain.Models;
+using log4net.Config;
 using Repository.Database;
 using System.Configuration;
+
+XmlConfigurator.Configure();
 
 IDictionary<string, string> properties = new Dictionary<string, string>();
 

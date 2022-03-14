@@ -8,8 +8,8 @@ namespace Repository
     public interface IRepository<ID, M> where M : Identifiable<ID>
     {
         M Add(M model);
-        IEnumerable<M> FindAll();
-        M FindOne(M model);
+        ICollection<M> FindAll();
+        M FindOne(ID id);
 
     }
 }

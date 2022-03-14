@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DatabaseConnectionFactories;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -29,7 +30,7 @@ namespace Repository.Utils
 
         private IDbConnection? CreateNewConnection()
         {
-            return DatabaseConnectionUtils.ConnectionFactory.GetInstance().CreateConnection(databaseConnectionProperties);
+            return ConnectionFactory.GetInstance().CreateConnection(databaseConnectionProperties);
         }
     }
 }

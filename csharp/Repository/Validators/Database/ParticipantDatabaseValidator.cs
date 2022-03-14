@@ -1,5 +1,4 @@
-﻿using DatabaseConnectionUtils;
-using Domain.Models;
+﻿using Domain.Models;
 using Repository.Utils;
 using Repository.Validators.Interfaces;
 using System;
@@ -8,7 +7,6 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Repository.Validators.Interfaces.IValidator<long, Domain.Models.Participant>;
 
 namespace Repository.Validators.Database.Postgresql
 {
@@ -37,7 +35,7 @@ namespace Repository.Validators.Database.Postgresql
                 errors += "Participant's name can't be empty!";
 
             if (!errors.Equals(""))
-                throw new InvalidModelException(errors);
+                throw new IRallyValidator.InvalidModelException(errors);
         }
 
         private Boolean TeamOfParticipantExists(Participant participant)

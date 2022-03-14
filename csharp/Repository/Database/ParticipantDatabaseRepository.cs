@@ -1,4 +1,4 @@
-﻿using DatabaseConnectionUtils;
+﻿using DatabaseConnectionFactories;
 using Domain.Models;
 using Repository.Interfaces;
 using Repository.Utils;
@@ -13,7 +13,6 @@ namespace Repository.Database
 {
     public class ParticipantDatabaseRepository : IParticipantRepository
     {
-        private ConnectionFactory connectionFactory;
         private ParticipantDatabaseValidator validator;
         private DatabaseUtils databaseUtils;
 
@@ -43,7 +42,6 @@ namespace Repository.Database
         {
             this.databaseUtils = new DatabaseUtils(databaseConnectionProperties);
             validator = new ParticipantDatabaseValidator(databaseConnectionProperties);
-            connectionFactory = ConnectionFactory.GetInstance();
         }
 
         public Participant Add(Participant model)
@@ -75,23 +73,30 @@ namespace Repository.Database
                     insertParticipantCommand.Parameters.Add(teamIdParam);
                     insertParticipantCommand.Parameters.Add(rallyIdParam);
 
-                    updateParticipantsNoCommand.Parameters.Add(rallyIdParam);
+                    var rallyUpdateIdParam = updateParticipantsNoCommand.CreateParameter();
+                    rallyUpdateIdParam.ParameterName = "@rally_id_param";
+                    rallyUpdateIdParam.Value = model.Rally.Id;
 
+                    updateParticipantsNoCommand.Parameters.Add(rallyUpdateIdParam);
+
+                    insertParticipantCommand.CommandText = INSERT_PARTICIPANT_SQL_STRING;
+                    updateParticipantsNoCommand.CommandText = INCREMENT_NUMBER_OF_PARTICIPANTS_FOR_RALLY_SQL_STRING;
                     var transaction = connection.BeginTransaction();
                     try
                     {
                         insertParticipantCommand.ExecuteNonQuery();
                         updateParticipantsNoCommand.ExecuteNonQuery();
-
-                        return FindParticipantByName(model.Name);
+                        transaction.Commit();
+                        existingParticipant = FindParticipantByName(model.Name);
                     }
                     catch (Exception ex)
                     {
                         transaction.Rollback();
+                        Console.WriteLine(ex.ToString());
                     }
                 }
             }
-            return null;
+            return existingParticipant;
         }
 
         public ICollection<Participant> FindMembersOfTeam(string teamName)
@@ -145,13 +150,13 @@ namespace Repository.Database
         }
 
 
-        public IEnumerable<Participant> FindAll()
+        public ICollection<Participant> FindAll()
         {
             throw new NotImplementedException();
         }
 
 
-        public Participant FindOne(Participant model)
+        public Participant FindOne(long participantId)
         {
             throw new NotImplementedException();
         }

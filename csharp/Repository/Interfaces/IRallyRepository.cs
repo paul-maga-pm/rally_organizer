@@ -9,5 +9,6 @@ namespace Repository.Interfaces
 {
     public interface IRallyRepository : IRepository<long, Rally>
     {
+        Rally FindRallyByEngineCapacity(int engineCapacity);
     }
 }

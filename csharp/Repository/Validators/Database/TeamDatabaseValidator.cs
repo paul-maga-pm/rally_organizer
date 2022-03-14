@@ -1,5 +1,4 @@
-﻿using DatabaseConnectionUtils;
-using Domain.Models;
+﻿using Domain.Models;
 using Repository.Interfaces;
 using Repository.Validators.Interfaces;
 using System;
@@ -14,7 +13,8 @@ namespace Repository.Validators.Database.Postgresql
     {
         public void Validate(Team model)
         {
-            throw new NotImplementedException();
+            if (model.TeamName.Equals(""))
+                throw new ITeamValidator.InvalidModelException("Team name can't be empty!");
         }
     }
 }

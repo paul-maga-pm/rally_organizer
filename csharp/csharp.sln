@@ -7,11 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repository", "Repository\Repository.csproj", "{448C4886-0867-4D4B-91DD-EC47BF125E82}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exceptions", "Exceptions\Exceptions.csproj", "{377D4F92-1AB4-4164-BA28-0264AF7570E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Exceptions", "Exceptions\Exceptions.csproj", "{377D4F92-1AB4-4164-BA28-0264AF7570E1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseConnectionUtils", "DatabaseConnectionUtils\DatabaseConnectionUtils.csproj", "{CB84EEF2-0B5C-4BC5-9E1B-5D5637875C7D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatabaseConnectionFactories", "DatabaseConnectionUtils\DatabaseConnectionFactories.csproj", "{CB84EEF2-0B5C-4BC5-9E1B-5D5637875C7D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{BE6328FE-D2F6-40E8-AAAD-4815E3D279D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "Application\Application.csproj", "{BE6328FE-D2F6-40E8-AAAD-4815E3D279D7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

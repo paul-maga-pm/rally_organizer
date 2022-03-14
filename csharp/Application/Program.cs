@@ -45,3 +45,30 @@ foreach(var member in participantRepo.FindMembersOfTeam("Handralai"))
     Console.WriteLine(member.Name);
 }
 
+var t1 = teamRepo.Add(new Team("mamamama"));
+var t2 = teamRepo.Add(new Team("jjjjjjjjjjj"));
+
+var r1 = rallyRepo.Add(new Rally(10));
+var r2 = rallyRepo.Add(new Rally(20));
+
+participantRepo.Add(new Participant(r1, t1, "A"));
+participantRepo.Add(new Participant(r1, t2, "B"));
+participantRepo.Add(new Participant(r2, t1, "C"));
+participantRepo.Add(new Participant(r2, t2, "D"));
+
+teamRepo.FindTeamByName(t1.TeamName);
+teamRepo.FindTeamByName(t2.TeamName);
+rallyRepo.FindRallyByEngineCapacity(10);
+rallyRepo.FindRallyByEngineCapacity(20);
+
+participantRepo.FindMembersOfTeam(t1.TeamName);
+participantRepo.FindMembersOfTeam(t2.TeamName);
+
+var userRepo = new UserDatabaseRepository(properties);
+
+//Console.WriteLine(userRepo.FindUserByUsername("Gigi").ToString());
+
+//userRepo.Add(new User("", ""));
+userRepo.Add(new User("Gigi", "Gigel"));
+
+

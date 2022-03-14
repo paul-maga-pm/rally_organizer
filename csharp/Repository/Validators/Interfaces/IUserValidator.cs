@@ -5,10 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Repository.Interfaces
+namespace Repository.Validators.Interfaces
 {
-    public interface IUserRepository : IRepository<long, User> 
+    public interface IUserValidator : IValidator<long, User>
     {
-        User FindUserByUsername(String username);
     }
 }

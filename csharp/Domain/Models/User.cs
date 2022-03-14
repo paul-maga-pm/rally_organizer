@@ -17,5 +17,23 @@ namespace Domain.Models
             Password = password;
         }
 
-     }
+        public override bool Equals(object? obj)
+        {
+            return obj is User user &&
+                   base.Equals(obj) &&
+                   Id == user.Id &&
+                   UserName == user.UserName &&
+                   Password == user.Password;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(base.GetHashCode(), Id, UserName, Password);
+        }
+
+        public override string? ToString()
+        {
+            return "" + "Id: " + Id + ", Username: " + UserName + ", Password: " + Password;
+        }
+    }
 }

@@ -14,9 +14,6 @@ import java.util.Properties;
 public class ParticipantDatabaseValidator implements ParticipantValidator {
     private JdbcUtils jdbcUtils;
 
-    private PreparedStatement findTeamByIdPreparedStatement;
-    private PreparedStatement findRallyByIdPreparedStatement;
-
     private static final String FIND_TEAM_BY_ID = "select * from teams where team_id=?";
     private static final String FIND_RALLY_BY_ID = "select * from rallies where rally_id=?";
 
@@ -29,11 +26,11 @@ public class ParticipantDatabaseValidator implements ParticipantValidator {
         String errors = "";
 
         if (!teamOfParticipantExists(participant))
-            errors += "Selected team doesn't exist!";
+            errors += "Selected team doesn't exist!\n";
         if (!rallyOfParticipantIsAssignedToExists(participant))
-            errors += "\nSelected rally doesn't exist!";
+            errors += "Selected rally doesn't exist!\n";
         if (participant.getParticipantName().equals(""))
-            errors += "\nParticipant's name can't be empty!";
+            errors += "Participant's name can't be empty!";
 
         if (!errors.equals(""))
             throw new Validator.InvalidModelException(errors);

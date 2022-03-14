@@ -53,7 +53,7 @@ public class ParticipantDatabaseRepository implements ParticipantRepository {
         log.traceEntry("Saving participant {}");
         participantValidator.validate(model);
 
-        var existingParticipant = findByParticipantName(model.getParticipantName());
+        var existingParticipant = findParticipantByName(model.getParticipantName());
         if (existingParticipant != null) {
             log.traceExit("Participant with equal name already exists: {}", existingParticipant);
             return existingParticipant;
@@ -121,7 +121,7 @@ public class ParticipantDatabaseRepository implements ParticipantRepository {
     }
 
     @Override
-    public Iterable<Participant> findByTeamName(String teamName) {
+    public Iterable<Participant> findMembersOfTeam(String teamName) {
         log.traceEntry("Searching for participants in team {}", teamName);
         List<Participant> participantsInTeam = new ArrayList<>();
 
@@ -143,7 +143,7 @@ public class ParticipantDatabaseRepository implements ParticipantRepository {
     }
 
     @Override
-    public Participant findByParticipantName(String participantName) {
+    public Participant findParticipantByName(String participantName) {
         log.traceEntry("Searching for participant with name {}", participantName);
         Participant existingParticipant = null;
         try(Connection connection = jdbcUtils.getConnection();

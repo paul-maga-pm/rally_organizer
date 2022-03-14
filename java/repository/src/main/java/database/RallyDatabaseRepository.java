@@ -36,7 +36,7 @@ public class RallyDatabaseRepository implements RallyRepository {
         logger.traceEntry("Saving rally {}", model);
         rallyValidator.validate(model);
 
-        var existingRally = findByEngineCapacity(model.getEngineCapacity());
+        var existingRally = findRallyByEngineCapacity(model.getEngineCapacity());
         if (existingRally != null) {
             logger.traceExit("Rally {} already exists", existingRally);
             return existingRally;
@@ -93,7 +93,7 @@ public class RallyDatabaseRepository implements RallyRepository {
 
 
     @Override
-    public Rally findByEngineCapacity(int engineCapacity) {
+    public Rally findRallyByEngineCapacity(int engineCapacity) {
         logger.traceEntry("Finding one rally by engine capacity...");
         Rally existingRally = null;
         try(Connection connection = jdbcUtils.getConnection();

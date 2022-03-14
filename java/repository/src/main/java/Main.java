@@ -5,7 +5,6 @@ import models.Participant;
 import models.Rally;
 import models.Team;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -44,7 +43,7 @@ public class Main {
         participantRepo.save(part3);
         participantRepo.save(part4);
 
-        participantRepo.findByTeamName("Honda").forEach(System.out::println);
+        participantRepo.findMembersOfTeam("Honda").forEach(System.out::println);
         rallyRepo.findAll().forEach(System.out::println);
     }
 }

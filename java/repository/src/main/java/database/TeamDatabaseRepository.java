@@ -1,6 +1,5 @@
 package database;
 
-import interfaces.Repository;
 import interfaces.TeamRepository;
 import models.Team;
 import org.apache.logging.log4j.LogManager;
@@ -33,7 +32,7 @@ public class TeamDatabaseRepository implements TeamRepository {
         log.traceEntry("Saving team {}", model);
         teamValidator.validate(model);
 
-        var existingTeam = findByTeamName(model.getTeamName());
+        var existingTeam = findTeamByName(model.getTeamName());
         if (existingTeam != null) {
             log.traceExit("Team with same name already exists: {}", existingTeam);
             return existingTeam;
@@ -61,7 +60,7 @@ public class TeamDatabaseRepository implements TeamRepository {
     }
 
     @Override
-    public Team findByTeamName(String teamName) {
+    public Team findTeamByName(String teamName) {
         log.traceEntry("Searching for team with name {}", teamName);
         Team existingTeam = null;
 

@@ -5,7 +5,6 @@ import models.Rally;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.JdbcUtils;
-import validators.database.RallyDatabaseValidator;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -15,9 +14,6 @@ import java.util.Properties;
 public class RallyDatabaseRepository implements RallyRepository {
 
     private JdbcUtils jdbcUtils;
-
-    private RallyDatabaseValidator rallyValidator = new RallyDatabaseValidator();
-
 
     private static final String INSERT_RALLY_SQL_STRING = "insert into rallies(engine_capacity) values (?)";
     private static final String FIND_ALL_RALLIES_SQL_STRING = "select rally_id, engine_capacity, number_of_participants from rallies";
@@ -34,7 +30,6 @@ public class RallyDatabaseRepository implements RallyRepository {
     @Override
     public Rally save(Rally model) {
         logger.traceEntry("Saving rally {}", model);
-        rallyValidator.validate(model);
 
         var existingRally = findRallyByEngineCapacity(model.getEngineCapacity());
         if (existingRally != null) {

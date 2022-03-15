@@ -2,7 +2,6 @@
 using log4net;
 using Repository.Interfaces;
 using Repository.Utils;
-using Repository.Validators.Database.Postgresql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +13,6 @@ namespace Repository.Database
     public class TeamDatabaseRepository : ITeamRepository
     {
         private DatabaseUtils databaseUtils;
-        private TeamDatabaseValidator validator;
         private static readonly ILog log = LogManager.GetLogger("TeamDatabaseRepository");
 
         private static readonly String INSERT_TEAM_SQL_STRING = "insert into teams(team_name) values (@team_name_param);";
@@ -25,7 +23,6 @@ namespace Repository.Database
         {
             log.Info("Creating team database repository...");
             databaseUtils = new DatabaseUtils(databaseConnectionProperties);
-            validator = new TeamDatabaseValidator();
             log.Info("Team database repository created!");
         }
         public Team FindTeamByName(string teamName)
@@ -69,7 +66,6 @@ namespace Repository.Database
         public Team Add(Team model)
         {
             log.Info("Adding new team " + model.ToString());
-            validator.Validate(model);
             
             var existingTeam = FindTeamByName(model.TeamName);
             if (existingTeam != null)

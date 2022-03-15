@@ -8,7 +8,6 @@ import models.Team;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.JdbcUtils;
-import validators.database.ParticipantDatabaseValidator;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -17,7 +16,6 @@ import java.util.Properties;
 
 public class ParticipantDatabaseRepository implements ParticipantRepository {
     private JdbcUtils jdbcUtils;
-    private ParticipantDatabaseValidator participantValidator;
 
     private Logger log = LogManager.getLogger();
 
@@ -44,14 +42,12 @@ public class ParticipantDatabaseRepository implements ParticipantRepository {
     public ParticipantDatabaseRepository(Properties databaseConnectionProperties) {
         log.traceEntry("Creating participant database repository...");
         this.jdbcUtils = new JdbcUtils(databaseConnectionProperties);
-        this.participantValidator = new ParticipantDatabaseValidator(databaseConnectionProperties);
         log.traceEntry("Participant database repository created");
     }
 
     @Override
     public Participant save(Participant model) {
         log.traceEntry("Saving participant {}");
-        participantValidator.validate(model);
 
         var existingParticipant = findParticipantByName(model.getParticipantName());
         if (existingParticipant != null) {

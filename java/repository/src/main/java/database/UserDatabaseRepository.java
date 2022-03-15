@@ -5,7 +5,6 @@ import models.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.JdbcUtils;
-import validators.database.UserDatabaseValidator;
 
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -14,7 +13,6 @@ import java.util.Properties;
 
 public class UserDatabaseRepository implements UserRepository {
     private JdbcUtils utils;
-    private UserDatabaseValidator validator;
     private Logger log = LogManager.getLogger();
 
     private static final String INSERT_USER_SQL_STRING = "insert into users(username, password) values(?, ?);";
@@ -29,8 +27,6 @@ public class UserDatabaseRepository implements UserRepository {
     @Override
     public User save(User model) {
         log.traceEntry("Adding new user " + model);
-
-        validator.validate(model);
 
         User addedUser = null;
 

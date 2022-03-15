@@ -5,14 +5,12 @@ import models.Team;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.JdbcUtils;
-import validators.database.TeamDatabaseValidator;
 
 import java.sql.*;
 import java.util.Properties;
 
 public class TeamDatabaseRepository implements TeamRepository {
     private JdbcUtils jdbcUtils;
-    private TeamDatabaseValidator teamValidator = new TeamDatabaseValidator();
 
     private Logger log = LogManager.getLogger();
 
@@ -30,7 +28,6 @@ public class TeamDatabaseRepository implements TeamRepository {
     @Override
     public Team save(Team model) {
         log.traceEntry("Saving team {}", model);
-        teamValidator.validate(model);
 
         var existingTeam = findTeamByName(model.getTeamName());
         if (existingTeam != null) {

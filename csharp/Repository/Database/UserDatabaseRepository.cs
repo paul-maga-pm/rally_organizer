@@ -2,7 +2,6 @@
 using log4net;
 using Repository.Interfaces;
 using Repository.Utils;
-using Repository.Validators.Database;
 
 namespace Repository.Database
 {
@@ -10,7 +9,6 @@ namespace Repository.Database
     {
         private DatabaseUtils databaseUtils;
 
-        private UserDatabaseValidator validator;
 
         private ILog log = LogManager.GetLogger(typeof(UserDatabaseRepository));
 
@@ -21,14 +19,12 @@ namespace Repository.Database
         {
             log.Info("Creating user database repository...");
             databaseUtils = new DatabaseUtils(databaseConnectionProperties);
-            validator = new UserDatabaseValidator(databaseConnectionProperties);
             log.Info("Created user dabase repository!");
         }
 
         public User Add(User model)
         {
             log.Info("Adding user " + model.ToString());
-            validator.Validate(model);
 
             User addedUser = null;
             try

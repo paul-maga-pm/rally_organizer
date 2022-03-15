@@ -3,7 +3,6 @@ using Domain.Models;
 using log4net;
 using Repository.Interfaces;
 using Repository.Utils;
-using Repository.Validators.Database.Postgresql;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -16,7 +15,6 @@ namespace Repository.Database
     public class RallyDatabaseRepository : IRallyRepository
     {
         private DatabaseUtils utils;
-        private RallyDatabaseValidator validator;
         private static readonly ILog log = LogManager.GetLogger("DallyDatabaseRepository");
 
         private static readonly String INSERT_RALLY_SQL_STRING = "insert into rallies(engine_capacity) values (@engine_capacity_param)";
@@ -27,7 +25,6 @@ namespace Repository.Database
         {
             log.Info("Creating rally database repository...");
             this.utils = new DatabaseUtils(databaseConnectionProperties);
-            validator = new RallyDatabaseValidator();
             log.Info("Rally database repository created!");
         }
         public Rally FindRallyByEngineCapacity(int engineCapacity)
@@ -67,7 +64,6 @@ namespace Repository.Database
         public Rally Add(Rally model)
         {
             log.Info("Adding new rally " + model.ToString());
-            validator.Validate(model);
             var existingRally = this.FindRallyByEngineCapacity(model.EngineCapacity);
             if (existingRally != null)
                 return existingRally;

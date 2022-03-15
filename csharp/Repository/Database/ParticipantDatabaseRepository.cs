@@ -3,7 +3,6 @@ using Domain.Models;
 using log4net;
 using Repository.Interfaces;
 using Repository.Utils;
-using Repository.Validators.Database.Postgresql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +13,6 @@ namespace Repository.Database
 {
     public class ParticipantDatabaseRepository : IParticipantRepository
     {
-        private ParticipantDatabaseValidator validator;
         private DatabaseUtils databaseUtils;
 
         private static readonly ILog log = LogManager.GetLogger("ParticipantDatabaseRepository");
@@ -45,14 +43,12 @@ namespace Repository.Database
         {
             log.Info("Creating repository...");
             this.databaseUtils = new DatabaseUtils(databaseConnectionProperties);
-            validator = new ParticipantDatabaseValidator(databaseConnectionProperties);
             log.Info("Repository created!");
         }
 
         public Participant Add(Participant model)
         {
             log.Info("Adding participant: " + model.ToString());
-            validator.Validate(model);
 
             var existingParticipant = FindParticipantByName(model.Name);
             if (existingParticipant != null)

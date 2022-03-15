@@ -5,7 +5,7 @@ using log4net.Config;
 using Repository.Database;
 using System.Configuration;
 
-XmlConfigurator.Configure();
+XmlConfigurator.Configure(new FileInfo("log4net.config"));
 
 IDictionary<string, string> properties = new Dictionary<string, string>();
 

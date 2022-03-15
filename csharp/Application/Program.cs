@@ -11,7 +11,7 @@ IDictionary<string, string> properties = new Dictionary<string, string>();
 
 String connectionString = ConfigurationManager.ConnectionStrings["RallyEventDb"].ConnectionString;
 
-properties.Add("ConnectionString", "Host=localhost;Username=postgres;Password=password;Database=rally_events");
+properties.Add("ConnectionString", connectionString);
 var participantRepo = new ParticipantDatabaseRepository(properties);
 var rallyRepo = new RallyDatabaseRepository(properties);
 var teamRepo = new TeamDatabaseRepository(properties);
@@ -69,6 +69,5 @@ var userRepo = new UserDatabaseRepository(properties);
 //Console.WriteLine(userRepo.FindUserByUsername("Gigi").ToString());
 
 //userRepo.Add(new User("", ""));
-userRepo.Add(new User("Gigi", "Gigel"));
 
 

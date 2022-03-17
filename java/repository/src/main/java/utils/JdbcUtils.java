@@ -1,5 +1,6 @@
 package utils;
 
+import exceptions.DatabaseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,11 +23,12 @@ public class JdbcUtils {
         try {
             if (connection == null || connection.isClosed())
                 connection = createNewConnection();
+            logger.traceExit();
+            return connection;
         } catch (SQLException e) {
             logger.error(e);
+            throw new DatabaseException(e);
         }
-        logger.traceExit();
-        return connection;
     }
 
     private Connection createNewConnection() {
@@ -38,13 +40,16 @@ public class JdbcUtils {
         logger.info("user {}", user);
         logger.info("password {}", password);
         try {
+            Connection connectionToBeReturned;
             if (user != null && password != null)
-                return DriverManager.getConnection(url, user, password);
-            return DriverManager.getConnection(url);
+                connectionToBeReturned = DriverManager.getConnection(url, user, password);
+            else
+                connectionToBeReturned = DriverManager.getConnection(url);
+            logger.traceExit();
+            return connectionToBeReturned;
         } catch (SQLException exception) {
             logger.error(exception);
+            throw new DatabaseException(exception);
         }
-        logger.traceExit("Returned connection is null");
-        return null;
     }
 }

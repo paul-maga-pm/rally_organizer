@@ -2,6 +2,8 @@ package interfaces;
 
 import models.Team;
 
+import java.util.Optional;
+
 public interface TeamRepository extends Repository<Long, Team> {
-    Team findTeamByName(String teamName);
+    Optional<Team> findTeamByName(String teamName);
 }

@@ -2,6 +2,8 @@ package interfaces;
 
 import models.Rally;
 
+import java.util.Optional;
+
 public interface RallyRepository extends Repository<Long, Rally> {
-    Rally findRallyByEngineCapacity(int engineCapacity);
+    Optional<Rally> findRallyByEngineCapacity(int engineCapacity);
 }

@@ -1,4 +1,4 @@
-package errors;
+package exceptions;
 
 public class ExceptionBaseClass extends RuntimeException{
     public ExceptionBaseClass() {

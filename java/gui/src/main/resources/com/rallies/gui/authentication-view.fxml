@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="368.0" prefWidth="319.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.rallies.gui.controllers.AuthenticationController">
+   <children>
+      <PasswordField fx:id="passwordField" layoutX="85.0" layoutY="184.0" />
+      <TextField fx:id="usernameTextField" layoutX="85.0" layoutY="136.0" />
+      <Button fx:id="loginButton" layoutX="136.0" layoutY="294.0" mnemonicParsing="false" onAction="#handleClickOnLoginButton" text="Login" />
+      <Label layoutX="96.0" layoutY="41.0" text="Rallies">
+         <font>
+            <Font size="46.0" />
+         </font></Label>
+      <Label layoutX="28.0" layoutY="140.0" text="Username" />
+      <Label layoutX="28.0" layoutY="188.0" text="Password" />
+      <Hyperlink layoutX="47.0" layoutY="255.0" text="Don't have an account? Create one now!" />
+      <Label fx:id="authenticationExceptionsLabel" layoutX="85.0" layoutY="217.0" prefHeight="39.0" prefWidth="149.0" textFill="#ea0b0b" />
+   </children>
+</AnchorPane>

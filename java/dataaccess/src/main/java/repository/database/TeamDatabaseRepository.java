@@ -9,10 +9,9 @@ import org.apache.logging.log4j.Logger;
 import repository.utils.JdbcUtils;
 
 import java.sql.*;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class TeamDatabaseRepository implements TeamRepository {
     private JdbcUtils jdbcUtils;
@@ -21,6 +20,7 @@ public class TeamDatabaseRepository implements TeamRepository {
 
     private static final String INSERT_TEAM_SQL_STRING = "insert into teams(team_name) values (?)";
     private static final String FIND_TEAM_BY_NAME_SQL_STRING = "select team_id, team_name from teams where team_name=?";
+    private static final String FIND_ALL_TEAMS_SQL_STRING = "select team_id, team_name from teams";
 
 
     public TeamDatabaseRepository(Properties databaseConnectionProperties) {
@@ -113,6 +113,35 @@ public class TeamDatabaseRepository implements TeamRepository {
 
     @Override
     public Collection<Team> findAll() {
-        throw new NotImplementedMethodException();
+        log.traceEntry("Searching for all teams...");
+        Supplier<Collection<Team>> teamCollectionSupplier = () -> {
+            try(Connection connection = jdbcUtils.getConnection();
+                PreparedStatement selectAllTeamsPreparedStatement = connection.prepareStatement(FIND_ALL_TEAMS_SQL_STRING);
+                ResultSet resultSet = selectAllTeamsPreparedStatement.executeQuery()) {
+
+                var allTeams = new ArrayList<Team>();
+                while (resultSet.next()) {
+                    long teamId = resultSet.getLong("team_id");
+                    String teamName = resultSet.getString("team_name");
+                    Team team = new Team(teamName);
+                    team.setId(teamId);
+                    allTeams.add(team);
+                }
+
+                return allTeams;
+            } catch (SQLException exception) {
+                log.error(exception);
+            }
+
+            return null;
+        };
+
+        Collection<Team> allTeams = teamCollectionSupplier.get();
+
+        if (allTeams == null)
+            throw new DatabaseException("Database exception occurred while returning all teams");
+
+        log.info("Found teams {}", allTeams);
+        return allTeams;
     }
 }

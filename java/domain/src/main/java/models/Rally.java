@@ -50,4 +50,8 @@ public class Rally extends Identifiable<Long> {
     public int hashCode() {
         return Objects.hash(super.hashCode(), engineCapacity, numberOfParticipants);
     }
+
+    public void setNumberOfParticipants(int numberOfParticipants) {
+        this.numberOfParticipants = numberOfParticipants;
+    }
 }

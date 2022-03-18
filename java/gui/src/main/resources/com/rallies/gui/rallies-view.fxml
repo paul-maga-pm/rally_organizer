@@ -3,9 +3,13 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.rallies.gui.controllers.MainWindowController">
+<AnchorPane prefHeight="250.0" prefWidth="345.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.rallies.gui.controllers.MainWindowController">
    <children>
-      <Button fx:id="logoutButton" layoutX="36.0" layoutY="200.0" mnemonicParsing="false" onAction="#handleClickOnLogoutButton" text="Log out" />
-      <TableView fx:id="ralliesTableView" layoutX="225.0" layoutY="85.0" prefHeight="200.0" prefWidth="300.0" />
+      <TableView layoutX="21.0" layoutY="25.0" prefHeight="200.0" prefWidth="302.0">
+        <columns>
+          <TableColumn fx:id="engineCapacityTableColumn" prefWidth="150.19998168945312" text="Engine Capacity" />
+          <TableColumn fx:id="numberOfParticipantsTableColumn" prefWidth="150.6000518798828" text="Number of participants" />
+        </columns>
+      </TableView>
    </children>
 </AnchorPane>

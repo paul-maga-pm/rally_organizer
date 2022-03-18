@@ -38,8 +38,8 @@ public class RalliesApplication extends Application {
 
 
         FXMLLoader authenticationFxmlLoader = new FXMLLoader(RalliesApplication.class.getResource("authentication-view.fxml"));
-        FXMLLoader ralliesFxmlLoader = new FXMLLoader(RalliesApplication.class.getResource("rallies-view.fxml"));
-        Scene ralliesScene = new Scene(ralliesFxmlLoader.load());
+        FXMLLoader ralliesFxmlLoader = new FXMLLoader(RalliesApplication.class.getResource("main-window-view.fxml"));
+        Scene mainWindowsScene = new Scene(ralliesFxmlLoader.load());
         Scene authenticationScene = new Scene(authenticationFxmlLoader.load());
 
 
@@ -50,7 +50,7 @@ public class RalliesApplication extends Application {
         authenticationController.setRallyService(rallyService);
         authenticationController.setTeamService(teamService);
         authenticationController.setPrimaryStage(stage);
-        authenticationController.setRalliesScene(ralliesScene);
+        authenticationController.setMainWindowScene(mainWindowsScene);
 
 
         mainWindowController = ralliesFxmlLoader.getController();

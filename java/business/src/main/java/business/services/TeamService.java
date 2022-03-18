@@ -3,6 +3,9 @@ package business.services;
 import repository.interfaces.TeamRepository;
 import models.Team;
 
+import java.util.Collection;
+import java.util.Optional;
+
 public class TeamService {
     private TeamRepository teamRepository;
 
@@ -15,4 +18,11 @@ public class TeamService {
         return teamRepository.save(team);
     }
 
+    public Collection<Team> getAll() {
+        return teamRepository.findAll();
+    }
+
+    public Optional<Team> findTeamByName(String teamName) {
+        return teamRepository.findTeamByName(teamName);
+    }
 }

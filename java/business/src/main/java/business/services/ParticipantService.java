@@ -6,6 +6,7 @@ import models.Rally;
 import models.Team;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public class ParticipantService {
     private ParticipantRepository participantRepository;
@@ -21,5 +22,9 @@ public class ParticipantService {
 
     public Collection<Participant> getAllMembersOfTeam(String teamName) {
         return participantRepository.findMembersOfTeam(teamName);
+    }
+
+    public Optional<Participant> findParticipantByName(String participantName) {
+        return participantRepository.findParticipantByName(participantName);
     }
 }

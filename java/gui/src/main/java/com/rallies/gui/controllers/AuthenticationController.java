@@ -18,7 +18,7 @@ public class AuthenticationController {
     private TeamService teamService;
     private RallyService rallyService;
     private ParticipantService participantService;
-
+    private MainWindowController mainWindowController;
 
     @FXML
     Button loginButton;
@@ -30,8 +30,7 @@ public class AuthenticationController {
     Label authenticationExceptionsLabel;
 
     private Stage primaryStage;
-    private Scene ralliesScene;
-    private MainWindowController mainWindowController;
+    private Scene mainWindowScene;
 
     @FXML
     void handleClickOnLoginButton(Event event) {
@@ -40,8 +39,8 @@ public class AuthenticationController {
 
         try {
             userService.login(username, password);
-            primaryStage.setScene(ralliesScene);
             mainWindowController.initializeModels();
+            primaryStage.setScene(mainWindowScene);
         } catch (AuthenticationException authenticationException) {
             authenticationExceptionsLabel.setText(authenticationException.getMessage());
         } catch (ExceptionBaseClass exceptionBaseClass) {
@@ -74,8 +73,8 @@ public class AuthenticationController {
         this.primaryStage = stage;
     }
 
-    public void setRalliesScene(Scene ralliesScene) {
-        this.ralliesScene = ralliesScene;
+    public void setMainWindowScene(Scene mainWindowScene) {
+        this.mainWindowScene = mainWindowScene;
     }
 
     public void setRalliesController(MainWindowController mainWindowController) {

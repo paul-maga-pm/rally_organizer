@@ -48,6 +48,14 @@ dependencies {
     implementation project (':business')
 }
 
+sourceSets {
+    main {
+        resources {
+            srcDirs = ["src/main/resources", "../shared-resources"]
+        }
+    }
+}
+
 test {
     useJUnitPlatform()
 }

@@ -98,7 +98,34 @@ namespace Repository.Database
 
         public ICollection<Team> FindAll()
         {
-            throw new NotImplementedException();
+            try
+            {
+                using(var connection = databaseUtils.GetConnection())
+                using(var command = connection.CreateCommand())
+                {
+                    command.CommandText = "select team_id, team_name from teams";
+                    
+                    var allTeams = new List<Team>();
+
+                    using(var reader = command.ExecuteReader())
+                    {
+                        while(reader.Read())
+                        {
+                            long teamId = reader.GetInt64(0);
+                            String teamName = reader.GetString(1);
+                            Team team = new Team(teamName);
+                            team.Id = teamId;
+                            allTeams.Add(team);
+                        }
+                    }
+                    return allTeams;
+                }   
+            }
+            catch(Exception ex)
+            {
+                log.Error(ex);
+            }
+            return null;
         }
 
         public Team FindOne(long id)

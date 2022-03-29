@@ -1,37 +1,36 @@
 package business.utils;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
 public class PasswordEncryptor {
-    private MessageDigest messageDigest;
+    Logger logger = LogManager.getLogger(PasswordEncryptor.class);
     public PasswordEncryptor(){
-        try {
-            this.messageDigest = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
     }
     
     public boolean authenticate(String password, String hashedPassword){
-        messageDigest.update(password.getBytes());
-        byte[] hashedPasswordInBytes = messageDigest.digest();
-        var v = hashedPassword.getBytes();
-        String expectedHashedPassword = convertToStringByteArray(hashedPasswordInBytes);
-        return expectedHashedPassword.equals(hashedPassword);
+        return hashedPassword.equals(hash(password));
     }
 
-    private String convertToStringByteArray(byte[] hashedPasswordInBytes) {
-        StringBuilder s = new StringBuilder();
-        for(int i=0; i< hashedPasswordInBytes.length ;i++)
-        {
-            s.append(Integer.toString((hashedPasswordInBytes[i] & 0xff) + 0x100, 16).substring(1));
+    public String hash(String password)  {
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("SHA-512");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
         }
-        return s.toString();
-    }
-
-    public String hash(String password){
-        messageDigest.update(password.getBytes());
-        return convertToStringByteArray(messageDigest.digest());
+        byte [] inputBytes = new byte[0];
+        try {
+            inputBytes = password.getBytes("UTF-16LE");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        byte[] digest = md.digest(inputBytes);
+        return Base64.getEncoder().encodeToString(digest);
     }
 }

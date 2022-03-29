@@ -27,5 +27,10 @@ namespace Domain.Models
         {
             return HashCode.Combine(base.GetHashCode(), Id, TeamName);
         }
+
+        public override string? ToString()
+        {
+            return TeamName;
+        }
     }
 }

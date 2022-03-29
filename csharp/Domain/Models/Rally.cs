@@ -36,5 +36,10 @@ namespace Domain.Models
         {
             return HashCode.Combine(base.GetHashCode(), Id, EngineCapacity, NumberOfParticipants);
         }
+
+        public override string? ToString()
+        {
+            return EngineCapacity.ToString();
+        }
     }
 }

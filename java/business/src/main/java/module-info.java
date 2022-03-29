@@ -5,4 +5,5 @@ module java.business.main {
     requires java.exceptions.main;
     requires java.domain.main;
     requires java.dataaccess.main;
+    requires org.apache.logging.log4j;
 }

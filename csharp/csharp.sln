@@ -13,6 +13,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatabaseConnectionFactories
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "Application\Application.csproj", "{BE6328FE-D2F6-40E8-AAAD-4815E3D279D7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Business", "Business\Business.csproj", "{268DC0ED-83B2-4E31-9A64-08C1805335B0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gui", "Gui\Gui.csproj", "{4727541F-63D3-4622-A06B-EA64722F7474}"
+	ProjectSection(ProjectDependencies) = postProject
+		{268DC0ED-83B2-4E31-9A64-08C1805335B0} = {268DC0ED-83B2-4E31-9A64-08C1805335B0}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +46,14 @@ Global
 		{BE6328FE-D2F6-40E8-AAAD-4815E3D279D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE6328FE-D2F6-40E8-AAAD-4815E3D279D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE6328FE-D2F6-40E8-AAAD-4815E3D279D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{268DC0ED-83B2-4E31-9A64-08C1805335B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{268DC0ED-83B2-4E31-9A64-08C1805335B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{268DC0ED-83B2-4E31-9A64-08C1805335B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{268DC0ED-83B2-4E31-9A64-08C1805335B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4727541F-63D3-4622-A06B-EA64722F7474}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4727541F-63D3-4622-A06B-EA64722F7474}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4727541F-63D3-4622-A06B-EA64722F7474}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4727541F-63D3-4622-A06B-EA64722F7474}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

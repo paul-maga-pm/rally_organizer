@@ -1,6 +1,6 @@
 package com.rallies.business.services.impl;
 
-import com.rallies.dataaccess.repository.api.RallyRepository;
+import com.rallies.dataaccess.api.RallyRepository;
 import models.Rally;
 
 import java.util.Collection;

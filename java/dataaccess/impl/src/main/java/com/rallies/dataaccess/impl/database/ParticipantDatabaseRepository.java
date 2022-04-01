@@ -1,7 +1,7 @@
-package com.rallies.dataaccess.repository.impl.database;
+package com.rallies.dataaccess.impl.database;
 
 import com.rallies.exceptions.impl.NotImplementedMethodException;
-import com.rallies.dataaccess.repository.api.ParticipantRepository;
+import com.rallies.dataaccess.api.ParticipantRepository;
 import models.Participant;
 import models.Rally;
 import models.Team;
@@ -38,9 +38,9 @@ public class ParticipantDatabaseRepository implements ParticipantRepository {
             "where p.participant_name=?";
 
     public ParticipantDatabaseRepository(Properties databaseConnectionProperties) {
-        log.traceEntry("Creating participant com.rallies.dataaccess.repository.impl.database com.rallies.dataaccess.repository...");
+        log.traceEntry("Creating participant com.rallies.dataaccess.impl.database com.rallies.dataaccess.repository...");
         this.jdbcUtils = new JdbcUtils(databaseConnectionProperties);
-        log.traceEntry("Participant com.rallies.dataaccess.repository.impl.database com.rallies.dataaccess.repository created");
+        log.traceEntry("Participant com.rallies.dataaccess.impl.database com.rallies.dataaccess.repository created");
     }
 
     @Override

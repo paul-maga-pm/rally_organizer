@@ -1,4 +1,4 @@
-package com.rallies.dataaccess.repository.impl.database;
+package com.rallies.dataaccess.impl.database;
 
 import com.rallies.exceptions.impl.ExceptionBaseClass;
 

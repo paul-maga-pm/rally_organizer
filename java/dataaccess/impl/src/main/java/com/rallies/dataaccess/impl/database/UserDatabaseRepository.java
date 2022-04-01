@@ -1,7 +1,7 @@
-package com.rallies.dataaccess.repository.impl.database;
+package com.rallies.dataaccess.impl.database;
 
 import com.rallies.exceptions.impl.NotImplementedMethodException;
-import com.rallies.dataaccess.repository.api.UserRepository;
+import com.rallies.dataaccess.api.UserRepository;
 import models.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,7 +22,7 @@ public class UserDatabaseRepository implements UserRepository {
     private static final String FIND_BY_USERNAME_SQL_STRING = "select user_id, username, password from users where username=?";
 
     public UserDatabaseRepository(Properties databaseConnectionProperties) {
-        log.traceEntry("Creating user com.rallies.dataaccess.repository.impl.database com.rallies.dataaccess.repository...");
+        log.traceEntry("Creating user com.rallies.dataaccess.impl.database com.rallies.dataaccess.repository...");
         utils = new JdbcUtils(databaseConnectionProperties);
         log.traceExit();
     }

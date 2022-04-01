@@ -2,7 +2,7 @@ package com.rallies.business.services.impl;
 
 
 import models.User;
-import com.rallies.dataaccess.repository.api.UserRepository;
+import com.rallies.dataaccess.api.UserRepository;
 
 public class UserService {
     private UserRepository userRepository;

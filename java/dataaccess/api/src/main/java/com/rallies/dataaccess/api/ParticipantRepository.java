@@ -1,4 +1,4 @@
-package com.rallies.dataaccess.repository.api;
+package com.rallies.dataaccess.api;
 
 import models.Participant;
 

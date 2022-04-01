@@ -1,6 +1,6 @@
 package com.rallies.business.services.impl;
 
-import com.rallies.dataaccess.repository.api.ParticipantRepository;
+import com.rallies.dataaccess.api.ParticipantRepository;
 import models.Participant;
 import models.Rally;
 import models.Team;

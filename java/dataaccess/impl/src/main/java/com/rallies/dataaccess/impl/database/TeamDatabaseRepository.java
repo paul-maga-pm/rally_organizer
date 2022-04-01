@@ -1,7 +1,7 @@
-package com.rallies.dataaccess.repository.impl.database;
+package com.rallies.dataaccess.impl.database;
 
 import com.rallies.exceptions.impl.NotImplementedMethodException;
-import com.rallies.dataaccess.repository.api.TeamRepository;
+import com.rallies.dataaccess.api.TeamRepository;
 import models.Team;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,9 +22,9 @@ public class TeamDatabaseRepository implements TeamRepository {
 
 
     public TeamDatabaseRepository(Properties databaseConnectionProperties) {
-        log.traceEntry("Creating team com.rallies.dataaccess.repository.impl.database com.rallies.dataaccess.repository...");
+        log.traceEntry("Creating team com.rallies.dataaccess.impl.database com.rallies.dataaccess.repository...");
         this.jdbcUtils = new JdbcUtils(databaseConnectionProperties);
-        log.traceEntry("Team com.rallies.dataaccess.repository.impl.database com.rallies.dataaccess.repository created");
+        log.traceEntry("Team com.rallies.dataaccess.impl.database com.rallies.dataaccess.repository created");
 
     }
 

@@ -4,4 +4,8 @@ include 'domain'
 include 'exceptions'
 include 'dataaccess'
 include 'business'
+include 'dataaccess:api'
+findProject(':dataaccess:api')?.name = 'api'
+include 'dataaccess:impl'
+findProject(':dataaccess:impl')?.name = 'impl'
 

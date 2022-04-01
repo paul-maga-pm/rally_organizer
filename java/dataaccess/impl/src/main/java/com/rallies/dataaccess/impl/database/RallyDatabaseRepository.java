@@ -1,7 +1,7 @@
-package com.rallies.dataaccess.repository.impl.database;
+package com.rallies.dataaccess.impl.database;
 
 import com.rallies.exceptions.impl.NotImplementedMethodException;
-import com.rallies.dataaccess.repository.api.RallyRepository;
+import com.rallies.dataaccess.api.RallyRepository;
 import models.Rally;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,9 +22,9 @@ public class RallyDatabaseRepository implements RallyRepository {
     private Logger logger = LogManager.getLogger();
 
     public RallyDatabaseRepository(Properties databaseConnectionProperties) {
-        logger.info("Creating rally com.rallies.dataaccess.repository.impl.database com.rallies.dataaccess.repository...");
+        logger.info("Creating rally com.rallies.dataaccess.impl.database com.rallies.dataaccess.repository...");
         this.jdbcUtils = new JdbcUtils(databaseConnectionProperties);
-        logger.info("Rally com.rallies.dataaccess.repository.impl.database com.rallies.dataaccess.repository created");
+        logger.info("Rally com.rallies.dataaccess.impl.database com.rallies.dataaccess.repository created");
     }
 
     @Override

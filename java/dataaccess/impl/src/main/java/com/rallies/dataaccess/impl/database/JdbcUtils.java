@@ -1,6 +1,5 @@
-package com.rallies.dataaccess.repository.impl.database;
+package com.rallies.dataaccess.impl.database;
 
-import com.rallies.dataaccess.repository.impl.database.DatabaseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,7 +18,7 @@ class JdbcUtils {
     }
 
     public Connection getConnection() {
-        logger.traceEntry("Requesting com.rallies.dataaccess.repository.impl.database connection...");
+        logger.traceEntry("Requesting com.rallies.dataaccess.impl.database connection...");
         try {
             if (connection == null || connection.isClosed())
                 connection = createNewConnection();
@@ -32,7 +31,7 @@ class JdbcUtils {
     }
 
     private Connection createNewConnection() {
-        logger.traceEntry("Creating new com.rallies.dataaccess.repository.impl.database connection...");
+        logger.traceEntry("Creating new com.rallies.dataaccess.impl.database connection...");
         String url = databaseConnectionProperties.getProperty("jdbc.url");
         String user = databaseConnectionProperties.getProperty("jdbc.user");
         String password = databaseConnectionProperties.getProperty("jdbc.password");

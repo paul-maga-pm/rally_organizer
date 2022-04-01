@@ -1,3 +1,3 @@
 module java.exceptions.main {
-    exports exceptions;
+    exports com.rallies.exceptions.impl;
 }

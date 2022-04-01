@@ -1,6 +1,5 @@
 module java.business.main {
-    exports business.exceptions;
-    exports business.services;
+    exports com.rallies.business.services.impl;
 
     requires java.exceptions.main;
     requires java.domain.main;

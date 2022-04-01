@@ -24,7 +24,7 @@ tasks.withType(JavaCompile) {
 
 application {
     mainModule = 'com.rallies.gui'
-    mainClass = 'com.rallies.gui.RalliesApplication'
+    mainClass = 'com.rallies.gui.impl.RalliesApplication'
 }
 
 javafx {

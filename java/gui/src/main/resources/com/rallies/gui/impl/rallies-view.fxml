@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="250.0" prefWidth="345.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.rallies.gui.impl.controllers.MainWindowController">
+   <children>
+      <TableView layoutX="21.0" layoutY="25.0" prefHeight="200.0" prefWidth="302.0">
+        <columns>
+          <TableColumn fx:id="engineCapacityTableColumn" prefWidth="150.19998168945312" text="Engine Capacity" />
+          <TableColumn fx:id="numberOfParticipantsTableColumn" prefWidth="150.6000518798828" text="Number of participants" />
+        </columns>
+      </TableView>
+   </children>
+</AnchorPane>

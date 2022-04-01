@@ -1,6 +1,6 @@
 package com.rallies.exceptions;
 
-public class NotImplementedMethodException extends ExceptionBaseClass {
+public class NotImplementedMethodException extends ExceptionBaseClass{
     public NotImplementedMethodException() {
     }
 

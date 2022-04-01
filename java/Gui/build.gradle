@@ -12,7 +12,7 @@ repositories {
 }
 
 application {
-    mainClass = 'com.rallies.gui.impl.RalliesApplication'
+    mainClass = 'com.rallies.gui.RalliesApplication'
 }
 
 javafx {
@@ -22,9 +22,7 @@ javafx {
 dependencies {
     implementation project(':Exceptions')
     implementation project(':Domain')
-    implementation project(':DataAccess:DataAccessApi')
-    implementation project(':DataAccess:DataAccessImpl')
-    implementation project (':Business')
+    implementation project (':Business:BusinessApi')
 }
 
 sourceSets {

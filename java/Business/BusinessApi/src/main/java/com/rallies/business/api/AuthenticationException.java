@@ -1,4 +1,5 @@
-package com.rallies.business.services.impl;
+package com.rallies.business.api;
+
 
 import com.rallies.exceptions.ExceptionBaseClass;
 

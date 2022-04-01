@@ -2,7 +2,7 @@ package com.rallies.dataaccess.impl.database;
 
 import com.rallies.exceptions.ExceptionBaseClass;
 
-public class DatabaseException extends ExceptionBaseClass {
+class DatabaseException extends ExceptionBaseClass {
     public DatabaseException() {
     }
 

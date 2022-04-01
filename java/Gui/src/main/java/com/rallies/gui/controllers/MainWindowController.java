@@ -1,8 +1,6 @@
-package com.rallies.gui.impl.controllers;
+package com.rallies.gui.controllers;
 
-import com.rallies.business.services.impl.ParticipantService;
-import com.rallies.business.services.impl.RallyService;
-import com.rallies.business.services.impl.TeamService;
+import com.rallies.business.api.RallyApplicationServices;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -21,9 +19,7 @@ import com.rallies.domain.models.Team;
 
 
 public class MainWindowController extends BorderPane {
-    private ParticipantService participantService;
-    private TeamService teamService;
-    private RallyService rallyService;
+    private RallyApplicationServices services;
     private Stage primaryStage;
     private Scene authenticationScene;
 
@@ -75,17 +71,6 @@ public class MainWindowController extends BorderPane {
     @FXML
     Button registerButton;
 
-    public void setParticipantService(ParticipantService participantService) {
-        this.participantService = participantService;
-    }
-
-    public void setTeamService(TeamService teamService) {
-        this.teamService = teamService;
-    }
-
-    public void setRallyService(RallyService rallyService) {
-        this.rallyService = rallyService;
-    }
 
     public void setPrimaryStage(Stage stage) {
         this.primaryStage = stage;
@@ -103,14 +88,14 @@ public class MainWindowController extends BorderPane {
     public void initializeModels() {
         if (rallyObservableList == null) {
             rallyObservableList = FXCollections.observableArrayList();
-            rallyObservableList.setAll(rallyService.findAllRallies());
+            rallyObservableList.setAll(services.getAllRallies());
             ralliesTableView.setItems(rallyObservableList);
             engineCapacityRegistrationChoiceBox.setItems(rallyObservableList);
         }
 
         if (teamObservableList == null) {
             teamObservableList = FXCollections.observableArrayList();
-            teamObservableList.setAll(teamService.getAll());
+            teamObservableList.setAll(services.getAllTeams());
             teamNamesChoiceBox.setItems(teamObservableList);
             teamNameRegistrationChoiceBox.setItems(teamObservableList);
 
@@ -130,7 +115,7 @@ public class MainWindowController extends BorderPane {
             @Override
             public void changed(ObservableValue<? extends Team> observable, Team oldValue, Team newValue) {
                 String teamName = observable.getValue().getTeamName();
-                foundMembersOfTeamObservableList.setAll(participantService.getAllMembersOfTeam(teamName));
+                foundMembersOfTeamObservableList.setAll(services.getAllMembersOfTeam(teamName));
             }
         });
 
@@ -196,7 +181,7 @@ public class MainWindowController extends BorderPane {
                 addRallyExceptionLabel.setText("Capacity must be between 50 and 2000");
                 return;
             }
-            Rally addedRally = rallyService.addNewRally(engineCapacity);
+            Rally addedRally = services.addRally(engineCapacity);
 
             if (!rallyObservableList.contains(addedRally))
                 rallyObservableList.add(addedRally);
@@ -214,11 +199,11 @@ public class MainWindowController extends BorderPane {
 
         if (teamName.equals(""))
             addTeamExceptionLabel.setText("Team name can't be empty!");
-        else if (teamService.findTeamByName(teamName).isPresent())
+        else if (services.getTeamByName(teamName).isPresent())
             addTeamExceptionLabel.setText(teamName + " team is already registered!");
         else {
             addTeamExceptionLabel.setText("");
-            Team addedTeam = teamService.addTeam(teamName);
+            Team addedTeam = services.addTeam(teamName);
             teamObservableList.add(addedTeam);
         }
     }
@@ -244,18 +229,18 @@ public class MainWindowController extends BorderPane {
                 return;
             }
 
-            if (participantService.findParticipantByName(participantName).isPresent()){
+            if (services.getParticipantByName(participantName).isPresent()){
                 addParticipantExceptionLabel.setText(participantName + " is already registered!");
                 return;
             }
-            Participant addedParticipant = participantService.addParticipant(selectedTeam, selectedRally, participantName);
+            Participant addedParticipant = services.addParticipant(selectedTeam, selectedRally, participantName);
             addParticipantExceptionLabel.setText("");
 
             Team selectedTeamInTableView = teamNamesChoiceBox.getSelectionModel().getSelectedItem();
             if (selectedTeamInTableView != null && selectedTeamInTableView.getTeamName().equals(selectedTeam.getTeamName()))
                 foundMembersOfTeamObservableList.add(addedParticipant);
 
-            rallyObservableList.setAll(rallyService.findAllRallies());
+            rallyObservableList.setAll(services.getAllRallies());
 
         }
     }

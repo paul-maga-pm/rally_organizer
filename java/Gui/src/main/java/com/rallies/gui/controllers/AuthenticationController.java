@@ -1,11 +1,8 @@
-package com.rallies.gui.impl.controllers;
+package com.rallies.gui.controllers;
 
-import com.rallies.business.services.impl.AuthenticationException;
-import com.rallies.business.services.impl.ParticipantService;
-import com.rallies.business.services.impl.RallyService;
-import com.rallies.business.services.impl.TeamService;
-import com.rallies.business.services.impl.UserService;
-import com.rallies.exceptions.impl.ExceptionBaseClass;
+import com.rallies.business.api.AuthenticationException;
+import com.rallies.business.api.RallyApplicationServices;
+import com.rallies.exceptions.ExceptionBaseClass;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -14,10 +11,7 @@ import javafx.stage.Stage;
 
 
 public class AuthenticationController {
-    private UserService userService;
-    private TeamService teamService;
-    private RallyService rallyService;
-    private ParticipantService participantService;
+    private RallyApplicationServices services;
     private MainWindowController mainWindowController;
 
     @FXML
@@ -38,7 +32,7 @@ public class AuthenticationController {
         String password = passwordField.getText();
 
         try {
-            userService.login(username, password);
+            services.login(username, password);
             mainWindowController.initializeModels();
             primaryStage.setScene(mainWindowScene);
         } catch (AuthenticationException authenticationException) {
@@ -51,22 +45,6 @@ public class AuthenticationController {
     private void showExceptionMessageBox(ExceptionBaseClass exceptionBaseClass) {
         Alert alert = new Alert(Alert.AlertType.ERROR, exceptionBaseClass.getMessage(), ButtonType.CLOSE);
         alert.showAndWait();
-    }
-
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
-    public void setTeamService(TeamService teamService) {
-        this.teamService = teamService;
-    }
-
-    public void setRallyService(RallyService rallyService) {
-        this.rallyService = rallyService;
-    }
-
-    public void setParticipantService(ParticipantService participantService) {
-        this.participantService = participantService;
     }
 
     public void setPrimaryStage(Stage stage) {

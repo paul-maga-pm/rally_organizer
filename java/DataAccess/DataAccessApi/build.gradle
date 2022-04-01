@@ -1,5 +1,5 @@
 plugins {
-    id 'java'
+    id 'java-library'
 }
 
 group 'com.rallies.dataaccess'
@@ -10,8 +10,8 @@ repositories {
 }
 
 dependencies {
-    implementation project(':Domain')
-    implementation project(':Exceptions')
+    api project(':Domain')
+    api project(':Exceptions')
 }
 
 test {

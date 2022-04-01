@@ -246,5 +246,7 @@ public class MainWindowController extends BorderPane {
     }
 
 
-
+    public void setServices(RallyApplicationServices services) {
+        this.services = services;
+    }
 }

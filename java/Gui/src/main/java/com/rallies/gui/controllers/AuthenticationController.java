@@ -58,4 +58,8 @@ public class AuthenticationController {
     public void setRalliesController(MainWindowController mainWindowController) {
         this.mainWindowController = mainWindowController;
     }
+
+    public void setServices(RallyApplicationServices services) {
+        this.services = services;
+    }
 }

@@ -1,5 +1,6 @@
 package com.rallies.gui;
 
+import com.rallies.business.api.RallyApplicationServices;
 import com.rallies.gui.controllers.AuthenticationController;
 import com.rallies.gui.controllers.MainWindowController;
 
@@ -10,52 +11,47 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.Properties;
 
-public class RalliesApplication extends Application {
 
+public class RalliesApplicationFxGui extends Application {
+    private static RallyApplicationServices services;
 
     private AuthenticationController authenticationController;
     private MainWindowController mainWindowController;
 
+    public static void setServices(RallyApplicationServices services) {
+        RalliesApplicationFxGui.services = services;
+    }
+
+    public RalliesApplicationFxGui() {
+
+    }
+
     @Override
     public void start(Stage stage) throws IOException {
 
-        FXMLLoader authenticationFxmlLoader = new FXMLLoader(RalliesApplication.class.getResource("authentication-view.fxml"));
-        FXMLLoader ralliesFxmlLoader = new FXMLLoader(RalliesApplication.class.getResource("main-window-view.fxml"));
+        FXMLLoader authenticationFxmlLoader = new FXMLLoader(RalliesApplicationFxGui.class.getResource("authentication-view.fxml"));
+        FXMLLoader ralliesFxmlLoader = new FXMLLoader(RalliesApplicationFxGui.class.getResource("main-window-view.fxml"));
         Scene mainWindowsScene = new Scene(ralliesFxmlLoader.load());
         Scene authenticationScene = new Scene(authenticationFxmlLoader.load());
 
 
         authenticationController = authenticationFxmlLoader.getController();
-
-
         authenticationController.setPrimaryStage(stage);
         authenticationController.setMainWindowScene(mainWindowsScene);
-
+        authenticationController.setServices(services);
 
         mainWindowController = ralliesFxmlLoader.getController();
-
         mainWindowController.setPrimaryStage(stage);
         mainWindowController.setAuthenticationScene(authenticationScene);
+        mainWindowController.setServices(services);
 
         authenticationController.setRalliesController(mainWindowController);
+
 
         stage.setTitle("Login");
         stage.setScene(authenticationScene);
         stage.setResizable(false);
         stage.show();
     }
-
-    public static void main(String[] args) {
-        launch();
-    }
-
-    private static Properties loadRepositoryConfigurationProperties(String resourceFileName) throws IOException {
-        Properties properties = new Properties();
-        properties.load(RalliesApplication.class.getResourceAsStream(resourceFileName));
-        return properties;
-    }
-
-
 }

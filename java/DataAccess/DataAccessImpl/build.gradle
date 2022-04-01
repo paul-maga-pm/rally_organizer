@@ -1,5 +1,5 @@
 plugins {
-    id 'java'
+    id 'java-library'
 }
 
 group 'com.rallies.dataaccess'
@@ -15,9 +15,9 @@ dependencies {
 
 
 
-    implementation project (':Domain')
-    implementation project (':Exceptions')
-    implementation project (':DataAccess:DataAccessApi')
+    api project (':Domain')
+    api project (':Exceptions')
+    api project (':DataAccess:DataAccessApi')
     runtimeOnly group: 'org.postgresql', name: 'postgresql', version: '42.3.3'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.14.0'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.14.0'

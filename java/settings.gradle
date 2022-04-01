@@ -17,4 +17,5 @@ include 'Business:BusinessApi'
 findProject(':Business:BusinessApi')?.name = 'BusinessApi'
 include 'Business:BusinessImpl'
 findProject(':Business:BusinessImpl')?.name = 'BusinessImpl'
+include 'ClientApplication'
 

@@ -1,0 +1,40 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.7'
+}
+
+group 'com.rallies'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+application {
+    mainClass = 'com.rallies.gui.impl.RalliesApplication'
+}
+
+javafx {
+    modules = ['javafx.controls', 'javafx.fxml']
+}
+
+dependencies {
+    implementation project(':Exceptions')
+    implementation project(':Domain')
+    implementation project(':DataAccess:DataAccessApi')
+    implementation project(':DataAccess:DataAccessImpl')
+    implementation project (':Business')
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs = ["src/main/resources", "../shared-resources"]
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+}

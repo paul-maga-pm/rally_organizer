@@ -11,9 +11,6 @@ repositories {
 
 dependencies {
     api project(':Domain')
-    api project(':Exceptions')
-}
 
-test {
-    useJUnitPlatform()
+    implementation project(':Exceptions')
 }

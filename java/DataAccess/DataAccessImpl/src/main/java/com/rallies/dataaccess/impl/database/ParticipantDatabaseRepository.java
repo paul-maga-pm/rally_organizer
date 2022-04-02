@@ -48,7 +48,7 @@ public class ParticipantDatabaseRepository implements ParticipantRepository {
         Function<Participant, Participant> saveParticipantFunction = model -> {
             log.traceEntry("Saving participant {}");
 
-            var existingParticipantOptional = findParticipantByName(model.getParticipantName());
+            var existingParticipantOptional = getParticipantByName(model.getParticipantName());
             if (existingParticipantOptional.isPresent()) {
                 var existingParticipant = existingParticipantOptional.get();
                 log.traceExit("Participant with equal name already exists: {}", existingParticipant);
@@ -105,7 +105,7 @@ public class ParticipantDatabaseRepository implements ParticipantRepository {
     }
 
     @Override
-    public Collection<Participant> findMembersOfTeam(String teamName) {
+    public Collection<Participant> getMembersOfTeam(String teamName) {
         Function<String, Collection<Participant>> findMembersOfTeamFunction = team -> {
 
             log.traceEntry("Searching for participants in team {}", teamName);
@@ -140,7 +140,7 @@ public class ParticipantDatabaseRepository implements ParticipantRepository {
     }
 
     @Override
-    public Optional<Participant> findParticipantByName(String participantName) {
+    public Optional<Participant> getParticipantByName(String participantName) {
         Function<String, Optional<Participant>> findParticipantByNameFunction = name -> {
             log.traceEntry("Searching for participant with name {}", participantName);
 
@@ -172,12 +172,12 @@ public class ParticipantDatabaseRepository implements ParticipantRepository {
     }
 
     @Override
-    public Participant findOne(Long modelID) {
+    public Participant getById(Long modelID) {
         throw new NotImplementedMethodException();
     }
 
     @Override
-    public Collection<Participant> findAll() {
+    public Collection<Participant> getAll() {
         throw new NotImplementedMethodException();
     }
 

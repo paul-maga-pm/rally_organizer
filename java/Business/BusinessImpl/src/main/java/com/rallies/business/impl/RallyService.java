@@ -18,6 +18,6 @@ public class RallyService {
     }
 
     public Collection<? extends Rally> getAllRallies() {
-        return rallyRepository.findAll();
+        return rallyRepository.getAll();
     }
 }

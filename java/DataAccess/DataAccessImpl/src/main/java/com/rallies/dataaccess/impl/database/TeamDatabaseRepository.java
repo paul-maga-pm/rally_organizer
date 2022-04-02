@@ -32,7 +32,7 @@ public class TeamDatabaseRepository implements TeamRepository {
     public Team save(Team model) {
         Function<Team, Team> saveTeamFunction = team -> {
             log.traceEntry("Saving team {}", model);
-            var existingTeamOptional = findTeamByName(model.getTeamName());
+            var existingTeamOptional = getTeamByName(model.getTeamName());
             if (existingTeamOptional.isPresent()) {
                 log.info("Team with same name already exists: {}", existingTeamOptional.get());
                 log.traceExit();
@@ -69,7 +69,7 @@ public class TeamDatabaseRepository implements TeamRepository {
     }
 
     @Override
-    public Optional<Team> findTeamByName(String teamName) {
+    public Optional<Team> getTeamByName(String teamName) {
 
         Function<String, Optional<Team>> findTeamByNameFunction = name -> {
             log.traceEntry("Searching for team with name {}", teamName);
@@ -105,12 +105,12 @@ public class TeamDatabaseRepository implements TeamRepository {
     }
 
     @Override
-    public Team findOne(Long modelID) {
+    public Team getById(Long modelID) {
         throw new NotImplementedMethodException();
     }
 
     @Override
-    public Collection<Team> findAll() {
+    public Collection<Team> getAll() {
         log.traceEntry("Searching for all teams...");
         Supplier<Collection<Team>> teamCollectionSupplier = () -> {
             try(Connection connection = jdbcUtils.getConnection();

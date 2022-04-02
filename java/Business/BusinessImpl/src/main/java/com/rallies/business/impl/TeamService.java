@@ -19,10 +19,10 @@ public class TeamService {
     }
 
     public Collection<Team> getAllTeams() {
-        return teamRepository.findAll();
+        return teamRepository.getAll();
     }
 
     public Optional<Team> getTeamByName(String teamName) {
-        return teamRepository.findTeamByName(teamName);
+        return teamRepository.getTeamByName(teamName);
     }
 }

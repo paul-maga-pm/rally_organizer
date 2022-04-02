@@ -21,10 +21,10 @@ public class ParticipantService {
     }
 
     public Collection<Participant> getAllMembersOfTeam(String teamName) {
-        return participantRepository.findMembersOfTeam(teamName);
+        return participantRepository.getMembersOfTeam(teamName);
     }
 
     public Optional<Participant> getParticipantByName(String participantName) {
-        return participantRepository.findParticipantByName(participantName);
+        return participantRepository.getParticipantByName(participantName);
     }
 }

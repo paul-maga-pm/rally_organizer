@@ -26,7 +26,3 @@ dependencies {
     implementation project(':Business:BusinessImpl')
     implementation project(':Gui')
 }
-
-test {
-    useJUnitPlatform()
-}

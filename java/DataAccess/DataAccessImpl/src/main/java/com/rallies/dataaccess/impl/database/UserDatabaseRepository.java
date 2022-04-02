@@ -32,7 +32,7 @@ public class UserDatabaseRepository implements UserRepository {
         Function<User, User> saveUserFunction = user -> {
             log.traceEntry("Adding new user " + model);
 
-            var existingUserOptional = findUserByUserName(model.getUserName());
+            var existingUserOptional = getUserByUsername(model.getUserName());
             if (existingUserOptional.isPresent()) {
                 log.info("User {} already exists", model.getUserName());
                 log.traceExit();
@@ -71,7 +71,7 @@ public class UserDatabaseRepository implements UserRepository {
     }
 
     @Override
-    public Optional<User> findUserByUserName(String username) {
+    public Optional<User> getUserByUsername(String username) {
         Function<String, Optional<User>> findUserFunction = usrname -> {
             log.traceEntry("Searching for user with username {}", username);
             try (var connection = utils.getConnection();
@@ -111,12 +111,12 @@ public class UserDatabaseRepository implements UserRepository {
     }
 
     @Override
-    public User findOne(Long modelID) {
+    public User getById(Long modelID) {
         throw new NotImplementedMethodException();
     }
 
     @Override
-    public Collection<User> findAll() {
+    public Collection<User> getAll() {
         throw new NotImplementedMethodException();
     }
 }

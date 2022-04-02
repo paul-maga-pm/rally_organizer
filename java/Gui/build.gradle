@@ -1,5 +1,5 @@
 plugins {
-    id 'java'
+    id 'java-library'
     id 'org.openjfx.javafxplugin' version '0.0.7'
 }
 
@@ -16,9 +16,7 @@ javafx {
 }
 
 dependencies {
-    implementation project(':Exceptions')
-    implementation project(':Domain')
-    implementation project (':Business:BusinessApi')
+    api project (':Business:BusinessApi')
 }
 
 sourceSets {
@@ -27,8 +25,4 @@ sourceSets {
             srcDirs = ["src/main/resources", "../shared-resources"]
         }
     }
-}
-
-test {
-    useJUnitPlatform()
 }

@@ -12,7 +12,7 @@ public class UserService {
     }
 
     public void login(String username, String password) {
-        var foundUserOptional = userRepository.findUserByUserName(username);
+        var foundUserOptional = userRepository.getUserByUsername(username);
 
         var foundUser = foundUserOptional.orElseThrow(() -> {
             throw new AuthenticationException("Username doesn't exist!");

@@ -33,7 +33,7 @@ public class RallyDatabaseRepository implements RallyRepository {
 
             logger.traceEntry("Saving rally {}", model);
 
-            var existingRallyOptional = findRallyByEngineCapacity(model.getEngineCapacity());
+            var existingRallyOptional = getRallyByEngineCapacity(model.getEngineCapacity());
             if (existingRallyOptional.isPresent()) {
                 logger.info("Rally {} already exists", existingRallyOptional.get());
                 logger.traceExit();
@@ -74,7 +74,7 @@ public class RallyDatabaseRepository implements RallyRepository {
 
 
     @Override
-    public Collection<Rally> findAll() {
+    public Collection<Rally> getAll() {
         Supplier<Collection<Rally>> findAllSupplier = () -> {
                 logger.traceEntry("Returning all rallies...");
 
@@ -111,7 +111,7 @@ public class RallyDatabaseRepository implements RallyRepository {
 
 
     @Override
-    public Optional<Rally> findRallyByEngineCapacity(int engineCapacity) {
+    public Optional<Rally> getRallyByEngineCapacity(int engineCapacity) {
         Function<Integer, Optional<Rally>> findRallyByEngineCapacityFunction = capacity -> {
             logger.traceEntry("Finding one rally by engine capacity...");
 
@@ -147,7 +147,7 @@ public class RallyDatabaseRepository implements RallyRepository {
     }
 
     @Override
-    public Rally findOne(Long modelID) {
+    public Rally getById(Long modelID) {
         throw new NotImplementedMethodException();
     }
 }

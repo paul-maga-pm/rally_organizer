@@ -19,10 +19,3 @@ dependencies {
     api project (':Business:BusinessApi')
 }
 
-sourceSets {
-    main {
-        resources {
-            srcDirs = ["src/main/resources", "../shared-resources"]
-        }
-    }
-}

@@ -1,11 +1,10 @@
 plugins {
     id 'java'
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.0.7'
 }
 
 application {
-    mainClass='com.rallies.clientapplication.ClientRalliesApplication'
+    mainClass='com.rallies.serverapplication.ServerApplication'
 }
 
 group 'com.rallies'
@@ -15,15 +14,12 @@ repositories {
     mavenCentral()
 }
 
-javafx {
-    modules = ['javafx.controls', 'javafx.fxml']
-}
-
 dependencies {
+    implementation project(':DataAccess:DataAccessImpl')
+    implementation project(':Business:BusinessImpl')
+    implementation project(':Networking:Server')
+    implementation project(':Networking:Protocols')
     implementation 'org.springframework:spring-context:5.3.17'
-
-    implementation project(':Networking:Client')
-    implementation project(':Gui')
 }
 
 
@@ -34,4 +30,5 @@ sourceSets {
         }
     }
 }
+
 

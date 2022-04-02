@@ -1,6 +1,7 @@
 package com.rallies.gui.controllers;
 
 import com.rallies.business.api.RallyApplicationServices;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -82,6 +83,7 @@ public class MainWindowController extends BorderPane {
 
     @FXML
     void handleClickOnLogoutButton(Event event) {
+        Platform.runLater(() -> services.logout());
         primaryStage.setScene(authenticationScene);
     }
 

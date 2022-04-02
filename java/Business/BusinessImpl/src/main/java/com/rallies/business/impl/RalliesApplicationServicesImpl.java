@@ -25,7 +25,7 @@ public class RalliesApplicationServicesImpl implements RallyApplicationServices 
     }
 
     @Override
-    public Participant addParticipant(Team participantTeam, Rally rallyParticipatesTo, String participantName) {
+    public synchronized Participant addParticipant(Team participantTeam, Rally rallyParticipatesTo, String participantName) {
         return participantService.addParticipant(participantTeam, rallyParticipatesTo, participantName);
     }
 
@@ -67,5 +67,10 @@ public class RalliesApplicationServicesImpl implements RallyApplicationServices 
     @Override
     public void login(String username, String password) {
         userService.login(username, password);
+    }
+
+    @Override
+    public void logout() {
+
     }
 }

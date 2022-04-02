@@ -1,8 +1,8 @@
 plugins {
-    id 'java-library'
+    id 'java'
 }
 
-group 'com.rallies.dataaccess'
+group 'com.rallies'
 version '1.0-SNAPSHOT'
 
 repositories {
@@ -10,5 +10,5 @@ repositories {
 }
 
 dependencies {
-    api project(':Domain')
+    implementation project(':Domain')
 }

@@ -1,61 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                            http://www.springframework.org/schema/beans/spring-beans.xsd
+                            http://www.springframework.org/schema/util
+                            http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <util:properties id="repositoryConfigProperties">
-        <prop key="jdbc.url">jdbc:postgresql://localhost:5432/rally_events</prop>
-        <prop key="jdbc.user">postgres</prop>
-        <prop key="jdbc.password">password</prop>
+    <util:properties id="clientProxyConfig">
+        <prop key="host">127.0.0.1</prop>
+        <prop key="port">9999</prop>
     </util:properties>
 
-    <bean id="userRepository"
-          class="com.rallies.dataaccess.impl.database.UserDatabaseRepository">
-            <constructor-arg ref="repositoryConfigProperties"/>
-    </bean>
-
-    <bean id="participantRepository"
-          class="com.rallies.dataaccess.impl.database.ParticipantDatabaseRepository">
-            <constructor-arg ref="repositoryConfigProperties"/>
-    </bean>
-
-    <bean id="rallyRepository"
-          class="com.rallies.dataaccess.impl.database.RallyDatabaseRepository">
-            <constructor-arg ref="repositoryConfigProperties"/>
-    </bean>
-
-    <bean id="teamRepository"
-          class="com.rallies.dataaccess.impl.database.TeamDatabaseRepository">
-            <constructor-arg ref="repositoryConfigProperties"/>
-    </bean>
-
-    <bean id="participantService"
-            class="com.rallies.business.impl.ParticipantService">
-                <constructor-arg ref="participantRepository"/>
-    </bean>
-
-    <bean id="userService"
-          class="com.rallies.business.impl.UserService">
-        <constructor-arg ref="userRepository"/>
-    </bean>
-
-    <bean id="rallyService"
-          class="com.rallies.business.impl.RallyService">
-        <constructor-arg ref="rallyRepository"/>
-    </bean>
-
-    <bean id="teamService"
-          class="com.rallies.business.impl.TeamService">
-        <constructor-arg ref="teamRepository"/>
-    </bean>
-
-
     <bean id="ralliesApplicationServices"
-        class="com.rallies.business.impl.RalliesApplicationServicesImpl">
-            <constructor-arg index="0" ref="participantService"/>
-            <constructor-arg index="1" ref="userService"/>
-            <constructor-arg index="2" ref="rallyService"/>
-            <constructor-arg index="3" ref="teamService"/>
+        class="com.rallies.networking.client.proxy.RalliesServicesRpcProxy">
+            <constructor-arg ref="clientProxyConfig"/>
     </bean>
 
 </beans>

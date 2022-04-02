@@ -10,7 +10,6 @@ repositories {
 }
 
 dependencies {
-    api project(':Domain')
     api project(':DataAccess:DataAccessApi')
     api project(':Business:BusinessApi')
 

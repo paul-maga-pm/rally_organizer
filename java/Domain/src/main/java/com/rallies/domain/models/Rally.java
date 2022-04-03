@@ -34,8 +34,7 @@ public class Rally extends Identifiable<Long> {
         if (!(o instanceof Rally)) return false;
         if (!super.equals(o)) return false;
         Rally rally = (Rally) o;
-        return engineCapacity == rally.engineCapacity &&
-                numberOfParticipants == rally.numberOfParticipants;
+        return engineCapacity == rally.engineCapacity;
     }
 
     @Override
@@ -48,7 +47,7 @@ public class Rally extends Identifiable<Long> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), engineCapacity, numberOfParticipants);
+        return Objects.hash(super.hashCode(), engineCapacity);
     }
 
     public void setNumberOfParticipants(int numberOfParticipants) {

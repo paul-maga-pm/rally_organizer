@@ -255,7 +255,12 @@ public class MainWindowController implements RalliesObserver {
             Team selectedTeamInTableView = teamNamesChoiceBox.getSelectionModel().getSelectedItem();
                 if (selectedTeamInTableView != null && selectedTeamInTableView.getTeamName().equals(addedParticipant.getTeam().getTeamName()))
             foundMembersOfTeamObservableList.add(addedParticipant);
-            rallyObservableList.setAll(services.getAllRallies());
+
+            Rally rally = addedParticipant.getRally();
+            int index = rallyObservableList.indexOf(rally);
+            rallyObservableList.set(index, rally);
+
+            ralliesTableView.refresh();
         });
     }
 

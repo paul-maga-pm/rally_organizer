@@ -75,17 +75,12 @@ public class ParticipantDatabaseRepository implements ParticipantRepository {
                     connection.commit();
 
                     log.info("Transaction has been committed!");
-                    long generatedId;
-                    try(ResultSet generatedKeys = insertParticipantPreparedStatement.getGeneratedKeys()) {
-                        if (generatedKeys.next()) {
-                            generatedId = generatedKeys.getLong(1);
-                            Participant participantWithId = new Participant(model);
-                            participantWithId.setId(generatedId);
-                            log.traceExit("Participant {} has been created", participantWithId);
-                            return participantWithId;
-                        } else
-                            throw new SQLException("Can't find generated identity key!");
-                    }
+                    var addedParticipant = getParticipantByName(participant.getParticipantName());
+
+                    if (addedParticipant.isEmpty())
+                        throw new SQLException();
+
+                    return addedParticipant.get();
                 } catch (SQLException exception) {
                     log.error(exception);
                     connection.rollback();

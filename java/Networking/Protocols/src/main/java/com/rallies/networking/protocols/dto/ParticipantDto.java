@@ -9,9 +9,11 @@ public class ParticipantDto implements Serializable {
     private String participantName;
     private String teamId;
     private String rallyId;
+    private String numberOfParticipants;
 
     public ParticipantDto(String teamName,
                           String engineCapacity,
+                          String numberOfParticipants,
                           String participantName,
                           String teamId,
                           String rallyId) {
@@ -20,6 +22,7 @@ public class ParticipantDto implements Serializable {
         this.participantName = participantName;
         this.teamId = teamId;
         this.rallyId = rallyId;
+        this.numberOfParticipants = numberOfParticipants;
     }
 
     public String getTeamName() {
@@ -40,5 +43,9 @@ public class ParticipantDto implements Serializable {
 
     public String getRallyId() {
         return rallyId;
+    }
+
+    public String getNumberOfParticipants() {
+        return numberOfParticipants;
     }
 }

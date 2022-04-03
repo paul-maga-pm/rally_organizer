@@ -31,16 +31,19 @@ public class DtoUtils {
         var teamId = String.valueOf(participant.getTeam().getId());
 
         var engCap = String.valueOf(participant.getRally().getEngineCapacity());
+        var noOfPart = String.valueOf(participant.getRally().getNumberOfParticipants());
+
         var rallyId = String.valueOf(participant.getRally().getId());
 
         var participantName = participant.getParticipantName();
 
-        return new ParticipantDto(teamName, engCap, participantName, teamId, rallyId);
+        return new ParticipantDto(teamName, engCap, noOfPart ,participantName, teamId, rallyId);
     }
 
     public static Participant getModelFromDto(ParticipantDto dto) {
         var rallyId = Long.parseLong(dto.getRallyId());
-        var rally = new Rally(Integer.parseInt(dto.getEngineCapacity()));
+        var noOfPart = Integer.parseInt(dto.getNumberOfParticipants());
+        var rally = new Rally(Integer.parseInt(dto.getEngineCapacity()), noOfPart);
         var teamId = Long.parseLong(dto.getTeamId());
         var team = new Team(dto.getTeamName());
 
@@ -128,9 +131,10 @@ public class DtoUtils {
         var teamId = String.valueOf(participantTeam.getId());
 
         var engCap = String.valueOf(rallyParticipatesTo.getEngineCapacity());
+        var noOfPart = String.valueOf(rallyParticipatesTo.getNumberOfParticipants());
         var rallyId = String.valueOf(rallyParticipatesTo.getId());
 
-        return new ParticipantDto(teamName, engCap, participantName, teamId, rallyId);
+        return new ParticipantDto(teamName, engCap, noOfPart, participantName, teamId, rallyId);
     }
 
     public static RallyDto getDtoFromModel(Rally addedRally) {

@@ -8,6 +8,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class ServerApplication {
     public static void main(String[] args) {
         ApplicationContext context = new ClassPathXmlApplicationContext("ServerApplicationConfig.xml");
+        var services = context.getBean(RalliesApplicationServicesImpl.class);
+
         RpcServer server = context.getBean(RpcServer.class);
         server.start();
     }

@@ -137,6 +137,7 @@ public class RpcWorker implements Runnable, RalliesObserver {
             return new RpcResponse
                     .RpcResponseBuilder()
                     .setData(responseDto)
+                    .setResponseType(RpcResponseType.OK)
                     .build();
 
         } catch (ExceptionBaseClass exception) {
@@ -158,6 +159,7 @@ public class RpcWorker implements Runnable, RalliesObserver {
             return new RpcResponse
                     .RpcResponseBuilder()
                     .setData(DtoUtils.getDtoFromModel(addedTeam))
+                    .setResponseType(RpcResponseType.OK)
                     .build();
         } catch (ExceptionBaseClass exception) {
             clientIsConnected = false;
@@ -177,6 +179,7 @@ public class RpcWorker implements Runnable, RalliesObserver {
 
             return new RpcResponse
                     .RpcResponseBuilder()
+                    .setResponseType(RpcResponseType.OK)
                     .setData(DtoUtils.getDtoFromModel(rally))
                     .build();
         } catch (ExceptionBaseClass exception) {
@@ -208,6 +211,7 @@ public class RpcWorker implements Runnable, RalliesObserver {
 
             return new RpcResponse
                     .RpcResponseBuilder()
+                    .setResponseType(RpcResponseType.OK)
                     .setData(DtoUtils.getDtoFromModel(addedParticipant))
                     .build();
         } catch (ExceptionBaseClass exception) {
@@ -229,6 +233,7 @@ public class RpcWorker implements Runnable, RalliesObserver {
                 dtoResponse = DtoUtils.getDtoFromModel(participant.get());
             return new RpcResponse
                     .RpcResponseBuilder()
+                    .setResponseType(RpcResponseType.OK)
                     .setData(DtoUtils.getDtoFromModel(participant))
                     .build();
         } catch (ExceptionBaseClass exception) {
@@ -246,6 +251,7 @@ public class RpcWorker implements Runnable, RalliesObserver {
             var rallies = services.getAllRallies();
             return new RpcResponse
                     .RpcResponseBuilder()
+                    .setResponseType(RpcResponseType.OK)
                     .setData(DtoUtils.getDtoFromModel(rallies.toArray(new Rally[rallies.size()])))
                     .build();
         } catch (ExceptionBaseClass exception) {
@@ -263,6 +269,7 @@ public class RpcWorker implements Runnable, RalliesObserver {
             var teams = services.getAllTeams();
             return new RpcResponse
                     .RpcResponseBuilder()
+                    .setResponseType(RpcResponseType.OK)
                     .setData(DtoUtils.getDtoFromModel(teams.toArray(new Team[teams.size()])))
                     .build();
         } catch (ExceptionBaseClass exception) {
@@ -283,6 +290,7 @@ public class RpcWorker implements Runnable, RalliesObserver {
             var membersOfTeam = services.getAllMembersOfTeam(teamName);
             return new RpcResponse
                     .RpcResponseBuilder()
+                    .setResponseType(RpcResponseType.OK)
                     .setData(DtoUtils.getDtoFromModel(membersOfTeam.toArray(new Participant[membersOfTeam.size()])))
                     .build();
         } catch (ExceptionBaseClass exception) {

@@ -1,10 +1,9 @@
 package com.rallies.networking.protocols.rcpprotocol;
 
-import com.rallies.networking.protocols.Request;
-
+import java.io.Serializable;
 import java.util.Objects;
 
-public class RpcRequest extends Request {
+public class RpcRequest implements Serializable {
     private RpcRequestType requestType;
     Object data;
 

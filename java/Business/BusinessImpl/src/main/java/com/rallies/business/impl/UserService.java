@@ -3,6 +3,7 @@ package com.rallies.business.impl;
 
 import com.rallies.business.api.AuthenticationException;
 import com.rallies.dataaccess.api.UserRepository;
+import com.rallies.domain.models.User;
 
 public class UserService {
     private UserRepository userRepository;
@@ -20,5 +21,14 @@ public class UserService {
 
         if (!encryptor.authenticate(password, foundUser.getPassword()))
             throw new AuthenticationException("Incorrect password!");
+    }
+
+    public void register(String username, String password) {
+        if (userRepository.getUserByUsername(username).isPresent())
+            throw new AuthenticationException("Username " + username + " is already used!");
+
+        String hashPassword = encryptor.hash(password);
+        User user = new User(username, hashPassword);
+        userRepository.save(user);
     }
 }

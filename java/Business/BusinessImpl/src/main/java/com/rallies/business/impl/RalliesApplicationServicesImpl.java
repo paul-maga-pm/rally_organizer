@@ -1,11 +1,14 @@
 package com.rallies.business.impl;
 
+import com.rallies.business.api.RalliesObserver;
 import com.rallies.business.api.RallyApplicationServices;
 import com.rallies.domain.models.Participant;
 import com.rallies.domain.models.Rally;
 import com.rallies.domain.models.Team;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public class RalliesApplicationServicesImpl implements RallyApplicationServices {
@@ -13,6 +16,8 @@ public class RalliesApplicationServicesImpl implements RallyApplicationServices 
     private UserService userService;
     private RallyService rallyService;
     private TeamService teamService;
+
+    private List<RalliesObserver> observers;
 
     public RalliesApplicationServicesImpl(ParticipantService participantService,
                                           UserService userService,
@@ -22,55 +27,95 @@ public class RalliesApplicationServicesImpl implements RallyApplicationServices 
         this.userService = userService;
         this.rallyService = rallyService;
         this.teamService = teamService;
+
+        observers = new ArrayList<>();
     }
 
     @Override
     public synchronized Participant addParticipant(Team participantTeam, Rally rallyParticipatesTo, String participantName) {
-        return participantService.addParticipant(participantTeam, rallyParticipatesTo, participantName);
+        Participant addedParticipant = participantService.addParticipant(participantTeam, rallyParticipatesTo, participantName);
+        notifyObserversThatParticipantWasAdded(addedParticipant);
+        return addedParticipant;
     }
 
     @Override
-    public Collection<Participant> getAllMembersOfTeam(String teamName) {
+    public synchronized Collection<Participant> getAllMembersOfTeam(String teamName) {
         return participantService.getAllMembersOfTeam(teamName);
     }
 
     @Override
-    public Optional<Participant> getParticipantByName(String participantName) {
+    public synchronized Optional<Participant> getParticipantByName(String participantName) {
         return participantService.getParticipantByName(participantName);
     }
 
     @Override
-    public Rally addRally(int engineCapacity) {
-        return rallyService.addRally(engineCapacity);
+    public synchronized Rally addRally(int engineCapacity) {
+        Rally addedRally = rallyService.addRally(engineCapacity);
+        notifyObserversThatRallyWasAdded(addedRally);
+        return addedRally;
     }
 
     @Override
-    public Collection<? extends Rally> getAllRallies() {
+    public synchronized Collection<? extends Rally> getAllRallies() {
         return rallyService.getAllRallies();
     }
 
     @Override
-    public Team addTeam(String teamName) {
-        return teamService.addTeam(teamName);
+    public synchronized Team addTeam(String teamName) {
+        Team addedTeam = teamService.addTeam(teamName);
+        notifyObserversThatTeamWasAdded(addedTeam);
+        return addedTeam;
     }
 
     @Override
-    public Collection<Team> getAllTeams() {
+    public synchronized Collection<Team> getAllTeams() {
         return teamService.getAllTeams();
     }
 
     @Override
-    public Optional<Team> getTeamByName(String teamName) {
+    public synchronized Optional<Team> getTeamByName(String teamName) {
         return teamService.getTeamByName(teamName);
     }
 
     @Override
-    public void login(String username, String password) {
+    public synchronized void login(String username, String password) {
         userService.login(username, password);
     }
 
     @Override
-    public void logout() {
+    public synchronized void logout() {
 
+    }
+
+    @Override
+    public synchronized void addObserver(RalliesObserver ralliesObserver) {
+        observers.add(ralliesObserver);
+    }
+
+    @Override
+    public synchronized void removeObserver(RalliesObserver ralliesObserver) {
+        observers.remove(ralliesObserver);
+    }
+
+    @Override
+    public synchronized void notifyObserversThatParticipantWasAdded(Participant addedParticipant) {
+        for(var observer : observers)
+            observer.updateParticipantWasAdded(addedParticipant);
+    }
+
+    @Override
+    public synchronized void notifyObserversThatRallyWasAdded(Rally addedRally) {
+        for(var observer : observers)
+            observer.updateRallyWasAdded(addedRally);
+    }
+
+    @Override
+    public synchronized void notifyObserversThatTeamWasAdded(Team addedTeam) {
+        for(var observer : observers)
+            observer.updateTeamWasAdded(addedTeam);
+    }
+
+    public void registerUser(String user, String password) {
+        userService.register(user, password);
     }
 }

@@ -1,11 +1,10 @@
 package com.rallies.networking.protocols.rcpprotocol;
 
 
-import com.rallies.networking.protocols.Response;
-
+import java.io.Serializable;
 import java.util.Objects;
 
-public class RpcResponse extends Response {
+public class RpcResponse implements Serializable {
     private RpcResponseType responseType;
     private Object data;
 

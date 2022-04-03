@@ -7,7 +7,7 @@ import com.rallies.domain.models.Team;
 import java.util.Collection;
 import java.util.Optional;
 
-public interface RallyApplicationServices {
+public interface RallyApplicationServices extends RalliesObservable {
     Participant  addParticipant(Team participantTeam, Rally rallyParticipatesTo, String participantName);
     Collection<Participant> getAllMembersOfTeam(String teamName);
     Optional<Participant> getParticipantByName(String participantName);

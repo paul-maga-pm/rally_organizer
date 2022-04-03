@@ -1,5 +1,6 @@
 package com.rallies.serverapplication;
 
+import com.rallies.business.impl.RalliesApplicationServicesImpl;
 import com.rallies.networking.server.impl.RpcServer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

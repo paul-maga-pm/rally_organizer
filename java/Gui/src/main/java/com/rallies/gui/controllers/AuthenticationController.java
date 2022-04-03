@@ -34,6 +34,7 @@ public class AuthenticationController {
         try {
             services.login(username, password);
             mainWindowController.initializeModels();
+            services.addObserver(mainWindowController);
             primaryStage.setScene(mainWindowScene);
         } catch (AuthenticationException authenticationException) {
             authenticationExceptionsLabel.setText(authenticationException.getMessage());

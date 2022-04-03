@@ -7,12 +7,12 @@
                             http://www.springframework.org/schema/util/spring-util.xsd">
 
     <util:properties id="clientProxyConfig">
-        <prop key="host">127.0.0.1</prop>
-        <prop key="port">9999</prop>
+        <prop key="server.host">127.0.0.1</prop>
+        <prop key="server.port">9999</prop>
     </util:properties>
 
     <bean id="ralliesApplicationServices"
-        class="com.rallies.networking.client.proxy.RalliesServicesRpcProxy">
+        class="com.rallies.networking.client.proxy.RpcRalliesServicesProxy">
             <constructor-arg ref="clientProxyConfig"/>
     </bean>
 

@@ -43,7 +43,7 @@ public class AuthenticationController {
         }
     }
 
-    private void showExceptionMessageBox(ExceptionBaseClass exceptionBaseClass) {
+    public void showExceptionMessageBox(ExceptionBaseClass exceptionBaseClass) {
         Alert alert = new Alert(Alert.AlertType.ERROR, exceptionBaseClass.getMessage(), ButtonType.CLOSE);
         alert.showAndWait();
     }

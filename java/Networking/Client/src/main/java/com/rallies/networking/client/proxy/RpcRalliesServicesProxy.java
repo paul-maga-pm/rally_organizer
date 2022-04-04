@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -118,13 +119,27 @@ public class RpcRalliesServicesProxy implements RallyApplicationServices {
                             handleUpdateResponse(response);
                         else {
                             rpcResponseBlockingQueue.put(response);
-                            if(response.getResponseType() == RpcResponseType.OK_LOGOUT)
+                            if (response.getResponseType() == RpcResponseType.OK_LOGOUT)
                                 return;
 
-                            if(response.getResponseType() == RpcResponseType.LOGIN_ERROR)
+                            if (response.getResponseType() == RpcResponseType.LOGIN_ERROR)
                                 return;
                         }
-
+                    } catch (SocketException exception) {
+                        if (exception.getMessage().contains("Connection reset")) {
+                            logger.error("Server closed connection unexpectedly");
+                            try {
+                                var unexpectedErrorResponse = new RpcResponse
+                                        .RpcResponseBuilder()
+                                        .setData("Server unexpectedly closed connection")
+                                        .setResponseType(RpcResponseType.SERVER_ERROR)
+                                        .build();
+                                rpcResponseBlockingQueue.put(unexpectedErrorResponse);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            return;
+                    }
                     } catch (ClassNotFoundException e) {
                         logger.error("Couldn't find class for server response: " + e);
                     } catch (InterruptedException e) {
@@ -173,8 +188,10 @@ public class RpcRalliesServicesProxy implements RallyApplicationServices {
         try {
             clientRequestStream.writeObject(request);
             clientRequestStream.flush();
+        } catch (SocketException exception) {
+            throw new ExceptionBaseClass("Couldn't send request to server. Connection to server is closed.");
         } catch (IOException exception) {
-            logger.error("Couldn't create output stream for sending request " + request + ": " + exception);
+            logger.error("Couldn't write to output stream for sending request " + request + ": " + exception);
         }
     }
 
@@ -198,7 +215,6 @@ public class RpcRalliesServicesProxy implements RallyApplicationServices {
             if (loginResponseFromServer.getResponseType() == RpcResponseType.SERVER_ERROR){
                 String error = loginResponseFromServer.getData().toString();
                 logger.error("Login failed: " + error);
-                closeConnectionWithServer();
                 throw new ExceptionBaseClass(error);
             }
 

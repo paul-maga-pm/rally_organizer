@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class RpcWorker implements Runnable, RalliesObserver {
     private boolean clientIsConnected;
@@ -50,6 +51,11 @@ public class RpcWorker implements Runnable, RalliesObserver {
                 RpcRequest request = (RpcRequest) clientRequestStream.readObject();
                 RpcResponse response = handleClientRequest(request);
                 sendResponseToClient(response);
+            } catch (SocketException exception) {
+                if (exception.getMessage().contains("Connection reset")) {
+                    logger.info("Client close connection unexpectedly");
+                    closeConnectionStreams();
+                }
             } catch (ClassNotFoundException exception) {
                 logger.error("Object read from input stream is not found: " + exception);
             } catch (InvalidRpcRequestException exception) {

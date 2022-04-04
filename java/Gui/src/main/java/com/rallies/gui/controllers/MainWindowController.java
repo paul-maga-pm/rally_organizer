@@ -2,6 +2,7 @@ package com.rallies.gui.controllers;
 
 import com.rallies.business.api.RalliesObserver;
 import com.rallies.business.api.RallyApplicationServices;
+import com.rallies.exceptions.ExceptionBaseClass;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
@@ -80,25 +81,36 @@ public class MainWindowController implements RalliesObserver {
     public void setAuthenticationScene(Scene authenticationScene) {
         this.authenticationScene = authenticationScene;
     }
-
+    public void showExceptionMessageBox(ExceptionBaseClass exceptionBaseClass) {
+        Alert alert = new Alert(Alert.AlertType.ERROR, exceptionBaseClass.getMessage(), ButtonType.CLOSE);
+        alert.showAndWait();
+    }
     @FXML
     void handleClickOnLogoutButton(Event event) {
         Platform.runLater(() -> {
-            services.logout();
-            services.removeObserver(this);
+            try {
+                services.logout();
+                services.removeObserver(this);
+            } catch (ExceptionBaseClass exceptionBaseClass) {
+                showExceptionMessageBox(exceptionBaseClass);
+            }
         });
         primaryStage.setScene(authenticationScene);
     }
 
     public void initializeModels() {
-        rallyObservableList = FXCollections.observableArrayList();
-        rallyObservableList.setAll(services.getAllRallies());
-        ralliesTableView.setItems(rallyObservableList);
-        engineCapacityRegistrationChoiceBox.setItems(rallyObservableList);
-        teamObservableList = FXCollections.observableArrayList();
-        teamObservableList.setAll(services.getAllTeams());
-        teamNamesChoiceBox.setItems(teamObservableList);
-        teamNameRegistrationChoiceBox.setItems(teamObservableList);
+        try {
+            rallyObservableList = FXCollections.observableArrayList();
+            rallyObservableList.setAll(services.getAllRallies());
+            ralliesTableView.setItems(rallyObservableList);
+            engineCapacityRegistrationChoiceBox.setItems(rallyObservableList);
+            teamObservableList = FXCollections.observableArrayList();
+            teamObservableList.setAll(services.getAllTeams());
+            teamNamesChoiceBox.setItems(teamObservableList);
+            teamNameRegistrationChoiceBox.setItems(teamObservableList);
+        } catch (ExceptionBaseClass exceptionBaseClass) {
+            showExceptionMessageBox(exceptionBaseClass);
+        }
     }
 
     @FXML
@@ -116,7 +128,11 @@ public class MainWindowController implements RalliesObserver {
             public void changed(ObservableValue<? extends Team> observable, Team oldValue, Team newValue) {
                 if (observable.getValue() != null) {
                     String teamName = observable.getValue().getTeamName();
-                    foundMembersOfTeamObservableList.setAll(services.getAllMembersOfTeam(teamName));
+                    try {
+                        foundMembersOfTeamObservableList.setAll(services.getAllMembersOfTeam(teamName));
+                    } catch (ExceptionBaseClass exceptionBaseClass) {
+                        showExceptionMessageBox(exceptionBaseClass);
+                    }
                 }
             }
         });
@@ -183,6 +199,7 @@ public class MainWindowController implements RalliesObserver {
                 addRallyExceptionLabel.setText("Capacity must be between 50 and 2000");
                 return;
             }
+
             Rally addedRally = services.addRally(engineCapacity);
 
             if (!rallyObservableList.contains(addedRally))
@@ -192,6 +209,8 @@ public class MainWindowController implements RalliesObserver {
 
         } catch (NumberFormatException exception) {
             addRallyExceptionLabel.setText("Invalid numerical value for engine capacity");
+        } catch (ExceptionBaseClass exceptionBaseClass) {
+            showExceptionMessageBox(exceptionBaseClass);
         }
     }
 
@@ -199,13 +218,17 @@ public class MainWindowController implements RalliesObserver {
     void handleClickOnAddTeamButton(Event event) {
         String teamName = teamNameTextField.getText().strip();
 
-        if (teamName.equals(""))
-            addTeamExceptionLabel.setText("Team name can't be empty!");
-        else if (services.getTeamByName(teamName).isPresent())
-            addTeamExceptionLabel.setText(teamName + " team is already registered!");
-        else {
-            addTeamExceptionLabel.setText("");
-            services.addTeam(teamName);
+        try {
+            if (teamName.equals(""))
+                addTeamExceptionLabel.setText("Team name can't be empty!");
+            else if (services.getTeamByName(teamName).isPresent())
+                addTeamExceptionLabel.setText(teamName + " team is already registered!");
+            else {
+                addTeamExceptionLabel.setText("");
+                services.addTeam(teamName);
+            }
+        } catch (ExceptionBaseClass exceptionBaseClass) {
+            showExceptionMessageBox(exceptionBaseClass);
         }
     }
 
@@ -229,13 +252,16 @@ public class MainWindowController implements RalliesObserver {
                 addParticipantExceptionLabel.setText("You must select a rally!");
                 return;
             }
-
-            if (services.getParticipantByName(participantName).isPresent()){
-                addParticipantExceptionLabel.setText(participantName + " is already registered!");
-                return;
+            try {
+                if (services.getParticipantByName(participantName).isPresent()) {
+                    addParticipantExceptionLabel.setText(participantName + " is already registered!");
+                    return;
+                }
+                addParticipantExceptionLabel.setText("");
+                services.addParticipant(selectedTeam, selectedRally, participantName);
+            } catch (ExceptionBaseClass exception) {
+                showExceptionMessageBox(exception);
             }
-            addParticipantExceptionLabel.setText("");
-            services.addParticipant(selectedTeam, selectedRally, participantName);
         }
     }
 

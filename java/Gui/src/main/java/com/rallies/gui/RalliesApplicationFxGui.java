@@ -1,6 +1,7 @@
 package com.rallies.gui;
 
 import com.rallies.business.api.RallyApplicationServices;
+import com.rallies.exceptions.ExceptionBaseClass;
 import com.rallies.gui.controllers.AuthenticationController;
 import com.rallies.gui.controllers.MainWindowController;
 
@@ -55,8 +56,12 @@ public class RalliesApplicationFxGui extends Application {
             @Override
             public void handle(WindowEvent event) {
                 if (stage.getScene() == mainWindowsScene) {
-                    services.logout();
-                    services.removeObserver(mainWindowController);
+                    try {
+                        services.logout();
+                        services.removeObserver(mainWindowController);
+                    } catch (ExceptionBaseClass exceptionBaseClass) {
+                        authenticationController.showExceptionMessageBox(exceptionBaseClass);
+                    }
                 }
             }
         });

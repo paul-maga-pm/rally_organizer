@@ -312,6 +312,7 @@ public class RpcWorker implements Runnable, RalliesObserver {
     private RpcResponse handleLogoutRequest() {
         logger.info("User logging out...");
         services.logout();
+        services.removeObserver(this);
         clientIsConnected = false;
         return OK_LOGOUT_RESPONSE;
     }

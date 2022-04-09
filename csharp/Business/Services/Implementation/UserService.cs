@@ -1,10 +1,10 @@
-﻿using Business.Utils;
+﻿using Business.Exception;
+using Business.Utils;
 using Domain.Models;
 using Repository.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,7 +22,7 @@ namespace Business.Services
 
         public void LoginUser(String userName, String password)
         {
-            var foundUser = userRepository.FindUserByUsername(userName);
+            var foundUser = userRepository.GetByUsername(userName);
 
             if (foundUser == null)
                 throw new AuthenticationException("Username doesn't exist!");
@@ -33,7 +33,7 @@ namespace Business.Services
 
         public void RegisterUser(String userName, String password)
         {
-            if (userRepository.FindUserByUsername(userName) != null)
+            if (userRepository.GetByUsername(userName) != null)
                 throw new AuthenticationException("Username " + userName + " is already used!");
 
             String hashedPassword = encryptor.GetHashForPassword(password);

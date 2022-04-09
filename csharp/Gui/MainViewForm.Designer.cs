@@ -73,17 +73,17 @@
             this.rallyGridView.Name = "rallyGridView";
             this.rallyGridView.RowHeadersWidth = 51;
             this.rallyGridView.RowTemplate.Height = 29;
-            this.rallyGridView.Size = new System.Drawing.Size(335, 188);
+            this.rallyGridView.Size = new System.Drawing.Size(405, 188);
             this.rallyGridView.TabIndex = 1;
             // 
             // participantsGridView
             // 
             this.participantsGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.participantsGridView.Location = new System.Drawing.Point(427, 117);
+            this.participantsGridView.Location = new System.Drawing.Point(436, 117);
             this.participantsGridView.Name = "participantsGridView";
             this.participantsGridView.RowHeadersWidth = 51;
             this.participantsGridView.RowTemplate.Height = 29;
-            this.participantsGridView.Size = new System.Drawing.Size(304, 188);
+            this.participantsGridView.Size = new System.Drawing.Size(410, 188);
             this.participantsGridView.TabIndex = 2;
             // 
             // teamNamesForSearchComboBox
@@ -271,7 +271,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 525);
+            this.ClientSize = new System.Drawing.Size(858, 525);
             this.Controls.Add(this.participantAddExceptionLabel);
             this.Controls.Add(this.registerParticipantButton);
             this.Controls.Add(this.label8);

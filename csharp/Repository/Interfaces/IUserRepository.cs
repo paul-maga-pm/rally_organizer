@@ -9,6 +9,6 @@ namespace Repository.Interfaces
 {
     public interface IUserRepository : IRepository<long, User> 
     {
-        User FindUserByUsername(String username);
+        User? GetByUsername(String username);
     }
 }

@@ -25,7 +25,7 @@ namespace Business.Services
 
         public ICollection<Rally> GetAllRallies()
         {
-            return rallyRepository.FindAll();
+            return rallyRepository.GetAll();
         }
     }
 }

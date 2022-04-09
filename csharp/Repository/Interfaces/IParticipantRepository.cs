@@ -9,7 +9,7 @@ namespace Repository.Interfaces
 {
     public interface IParticipantRepository : IRepository<long, Participant>
     {
-        Participant FindParticipantByName(String participantName);
-        ICollection<Participant> FindMembersOfTeam(String teamName);
+        Participant? GetByName(String participantName);
+        ICollection<Participant> GetMembersOfTeam(String teamName);
     }
 }

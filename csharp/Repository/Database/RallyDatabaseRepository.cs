@@ -6,6 +6,7 @@ using Repository.Utils;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,10 +28,9 @@ namespace Repository.Database
             this.utils = new DatabaseUtils(databaseConnectionProperties);
             log.Info("Rally database repository created!");
         }
-        public Rally FindRallyByEngineCapacity(int engineCapacity)
+        public Rally? GetByEngineCapacity(int engineCapacity)
         {
             log.Info("Searching for rally by engine capacity " + engineCapacity);
-            Rally rally = null;
 
             try
             {
@@ -49,26 +49,26 @@ namespace Repository.Database
                         {
                             if (reader.Read())
                             {
-                                rally = GetCurrentRallyFromReader(reader);
+                                return GetCurrentRallyFromReader(reader);
                             }
+                            return null;
                         }
                     }
                 }
             }
-            catch(Exception ex)
+            catch(DbException ex)
             {
                 log.Error(ex.Message, ex);
+                throw new DatabaseException("Error occured while searching for rally with engine capacity " + engineCapacity);
             }
-            return rally;
         }
         public Rally Add(Rally model)
         {
             log.Info("Adding new rally " + model.ToString());
-            var existingRally = this.FindRallyByEngineCapacity(model.EngineCapacity);
+            var existingRally = this.GetByEngineCapacity(model.EngineCapacity);
             if (existingRally != null)
                 return existingRally;
 
-            Rally savedRally = null;
             try
             {
                 using (var connection = utils.GetConnection())
@@ -81,20 +81,23 @@ namespace Repository.Database
                     engineCapacityParameter.Value = model.EngineCapacity;
                     command.Parameters.Add(engineCapacityParameter);
                     command.ExecuteNonQuery();
-                    savedRally = FindRallyByEngineCapacity(model.EngineCapacity);
+                    Rally? savedRally = GetByEngineCapacity(model.EngineCapacity);
+
+                    if (savedRally == null)
+                        throw new DatabaseException("Error occured while saving rally " + model);
+                    return savedRally;
                 }
             }
-            catch(Exception ex)
+            catch(DbException ex)
             {
                 log.Error(ex.Message, ex);
+                throw new DatabaseException("Error occured while saving rally " + model);
             }
-            return savedRally;
         }
 
-        public ICollection<Rally> FindAll()
+        public ICollection<Rally> GetAll()
         {
             log.Info("Returning all rallies...");
-            ICollection<Rally> rallies = new List<Rally>();
 
             try
             {
@@ -105,20 +108,22 @@ namespace Repository.Database
                         command.CommandText = FIND_ALL_RALLIES_SQL_STRING;
                         using (var reader = command.ExecuteReader())
                         {
+                            ICollection<Rally> rallies = new List<Rally>();
                             while (reader.Read())
                             {
                                 rallies.Add(GetCurrentRallyFromReader(reader));
                             }
+                            return rallies; 
                         }
                     }
                 }
             }
-            catch(Exception exception)
+            catch(DbException exception)
             {
                 log.Error(exception.Message, exception);
+                throw new DatabaseException("Error occured while searching for all rallies");
             }
 
-            return rallies;
         }
 
         private Rally GetCurrentRallyFromReader(IDataReader reader)
@@ -133,7 +138,7 @@ namespace Repository.Database
 
 
 
-        public Rally FindOne(long rallyId)
+        public Rally GetById(long rallyId)
         {
             throw new NotImplementedException();
         }

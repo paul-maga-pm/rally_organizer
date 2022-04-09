@@ -27,12 +27,12 @@ namespace Business.Services
 
         public ICollection<Participant> GetAllMembersOfTeam(String teamName)
         {
-            return participantRepository.FindMembersOfTeam(teamName);
+            return participantRepository.GetMembersOfTeam(teamName);
         }
 
-        public Participant GetParticipantByName(String participantName)
+        public Participant? GetParticipantByName(String participantName)
         {
-            return participantRepository.FindParticipantByName(participantName);
+            return participantRepository.GetByName(participantName);
         }
     }
 }

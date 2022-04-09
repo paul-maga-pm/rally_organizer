@@ -1,4 +1,6 @@
-﻿using Domain.Models;
+﻿using Business.Services.Api;
+using Domain.Models;
+using Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,16 +16,17 @@ namespace Gui
     public partial class MainViewForm : Form
     {
         private LoginForm loginForm;
+        private IRallyApplicationServices _services;
 
 
+        private ICollection<Rally> rallyObservableCollection = new BindingList<Rally>();
+        private ICollection<Team> teamObservableCollection = new BindingList<Team>();
+        private ICollection<Participant> participantObservableCollection = new BindingList<Participant>();
 
-        private BindingList<Rally> rallyObservableCollection = new BindingList<Rally>();
-        private BindingList<Team> teamObservableCollection = new BindingList<Team>();
-        private BindingList<Participant> participantObservableCollection = new BindingList<Participant>();
-
-        public MainViewForm(LoginForm loginForm)
+        public MainViewForm(LoginForm loginForm, IRallyApplicationServices services)
         {
             this.loginForm = loginForm;
+            this._services = services;
             InitializeComponent();
         }
 
@@ -53,23 +56,44 @@ namespace Gui
 
         private void LoadMembersOfTeam(String teamName)
         {
-            participantObservableCollection.Clear();
-            foreach(var participant in Services.ParticipantService.GetAllMembersOfTeam(teamName))
-                participantObservableCollection.Add(participant);
+            try
+            {
+                participantObservableCollection.Clear();
+                foreach(Participant participant in _services.GetAllMembersOfTeam(teamName))
+                    participantObservableCollection.Add(participant);
+            }
+            catch(ExceptionBaseClass exception)
+            {
+                MessageBox.Show(exception.Message);
+            }
         }
 
         private void LoadRallies()
         {
-            rallyObservableCollection.Clear();
-            foreach (var rally in Services.RallyService.GetAllRallies())
-                rallyObservableCollection.Add(rally);
+            try
+            {
+                rallyObservableCollection.Clear();
+                foreach (Rally rally in _services.GetAllRallies())
+                    rallyObservableCollection.Add(rally);
+            }
+            catch(ExceptionBaseClass exception)
+            {
+                MessageBox.Show(exception.Message);
+            }
         }
 
         private void LoadTeams()
         {
-            teamObservableCollection.Clear();
-            foreach (var team in Services.TeamService.GetAllTeams())
-                teamObservableCollection.Add(team);
+            try
+            {
+                teamObservableCollection.Clear();
+                foreach(Team team in _services.GetAllTeams())
+                    teamObservableCollection.Add(team);
+            }
+            catch(ExceptionBaseClass exception)
+            {
+                MessageBox.Show(exception.Message);
+            }
         }
 
         private void MainViewForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -90,30 +114,44 @@ namespace Gui
 
         private void saveRallyButton_Click(object sender, EventArgs e)
         {
+           
+            rallyAddExceptionLabel.Text = "";
+            rallyAddExceptionLabel.Visible = true;
+            int engineCapacity;
             try
             {
-                rallyAddExceptionLabel.Text = "";
-                rallyAddExceptionLabel.Visible = true;
-                int engineCapacity = Convert.ToInt32(rallyEngineCapacityInput.Text);
-
-                if (engineCapacity < 50 || engineCapacity > 2000)
-                {
-                    rallyAddExceptionLabel.Text = "Capacity must be between 50 and 2000";
-                    return;
-                }
-                Rally addedRally = Services.RallyService.AddRally(engineCapacity);
-
-                if (!rallyObservableCollection.Contains(addedRally))
-                {
-                    rallyObservableCollection.Add(addedRally);
-                }
-                rallyAddExceptionLabel.Text = "";
-                rallyAddExceptionLabel.Visible = false;
+                engineCapacity = Convert.ToInt32(rallyEngineCapacityInput.Text);
             }
-            catch (Exception ex)
+            catch(FormatException)
             {
                 rallyAddExceptionLabel.Text = "Invalid numerical value!";
+                return;
             }
+
+            if (engineCapacity < 50 || engineCapacity > 2000)
+            {
+                rallyAddExceptionLabel.Text = "Capacity must be between 50 and 2000";
+                return;
+            }
+
+            Rally addedRally;
+            try
+            {
+                addedRally = _services.AddRally(engineCapacity);
+
+            }
+            catch (ExceptionBaseClass exception)
+            {
+                MessageBox.Show(exception.Message);
+                return;
+            }
+            if (!rallyObservableCollection.Contains(addedRally))
+            {
+                rallyObservableCollection.Add(addedRally);
+            }
+            rallyAddExceptionLabel.Text = "";
+            rallyAddExceptionLabel.Visible = false;
+            
         }
 
         private void saveTeamButton_Click(object sender, EventArgs e)
@@ -121,24 +159,32 @@ namespace Gui
             String teamName = teamNameInput.Text.Trim();
             teamAddExceptionLabel.Text = "";
             teamAddExceptionLabel.Visible = true;
-            if (teamName.Equals(""))
-            {
-                teamAddExceptionLabel.Text = "Team name can't be empty!";
-                return;
-            }
-            else if (Services.TeamService.FindTeamByName(teamName) != null)
-            {
-                teamAddExceptionLabel.Text = teamName + " team is already registered!";
-                return;
-            }
-            else
-            {
-                teamAddExceptionLabel.Text = "";
-                Team addedTeam = Services.TeamService.AddTeam(teamName);
-                teamObservableCollection.Add(addedTeam);
 
+            try
+            {
+                if (teamName.Equals(""))
+                {
+                    teamAddExceptionLabel.Text = "Team name can't be empty!";
+                    return;
+                }
+                else if (_services.GetTeamByName(teamName) != null)
+                {
+                    teamAddExceptionLabel.Text = teamName + " team is already registered!";
+                    return;
+                }
+                else
+                {
+                    teamAddExceptionLabel.Text = "";
+                    Team addedTeam = _services.AddTeam(teamName);
+                    teamObservableCollection.Add(addedTeam);
+
+                }
+                teamAddExceptionLabel.Visible = false;
             }
-            teamAddExceptionLabel.Visible = false;
+            catch(ExceptionBaseClass exception)
+            {
+                MessageBox.Show(exception.Message);
+            }
         }
 
         private void registerParticipantButton_Click(object sender, EventArgs e)
@@ -147,36 +193,43 @@ namespace Gui
             participantAddExceptionLabel.Text = "";
             participantAddExceptionLabel.Visible = true;
 
-            if (participantName.Equals(""))
-                participantAddExceptionLabel.Text = "Participant name can't be empty!";
-            else
+            try
             {
-                Team selectedTeam = teamNameForParticipantSaveComboBox.SelectedItem as Team;
-                if (selectedTeam == null)
+                if (participantName.Equals(""))
+                    participantAddExceptionLabel.Text = "Participant name can't be empty!";
+                else
                 {
-                    participantAddExceptionLabel.Text = "Select team!";
-                    return ;
+                    Team? selectedTeam = teamNameForParticipantSaveComboBox.SelectedItem as Team;
+                    if (selectedTeam == null)
+                    {
+                        participantAddExceptionLabel.Text = "Select team!";
+                        return;
+                    }
+
+                    Rally? selectedRally = rallyComboBox.SelectedItem as Rally;
+                    if (selectedRally == null)
+                    {
+                        participantAddExceptionLabel.Text = "Select rally!";
+                        return;
+                    }
+
+                    if (_services.GetParticipantByName(participantName) != null)
+                    {
+                        participantAddExceptionLabel.Text = participantName + " " + " is already registered!";
+                        return;
+                    }
+
+                    participantAddExceptionLabel.Text = "";
+
+                    var selectedTeamFromSearch = teamNamesForSearchComboBox.SelectedItem as Team;
+                    if (selectedTeamFromSearch != null && selectedTeamFromSearch.TeamName.Equals(selectedTeam.TeamName))
+                        participantObservableCollection.Add(_services.AddParticipant(selectedTeam, selectedRally, participantName));
+                    LoadRallies();
                 }
-
-                Rally selectedRally = rallyComboBox.SelectedItem as Rally;
-                if (selectedRally == null)
-                {
-                    participantAddExceptionLabel.Text = "Select rally!";
-                    return;
-                }
-
-                if (Services.ParticipantService.GetParticipantByName(participantName) != null)
-                {
-                    participantAddExceptionLabel.Text = participantName + " " + " is already registered!";
-                    return;
-                }
-
-                participantAddExceptionLabel.Text = "";
-
-                var selectedTeamFromSearch = teamNamesForSearchComboBox.SelectedItem as Team;
-                if (selectedTeamFromSearch != null && selectedTeamFromSearch.TeamName.Equals(selectedTeam.TeamName))
-                    participantObservableCollection.Add(Services.ParticipantService.AddParticipant(selectedTeam, selectedRally, participantName));
-                LoadRallies();
+            }
+            catch(ExceptionBaseClass exception)
+            {
+                MessageBox.Show(exception.Message);
             }
         }
     }

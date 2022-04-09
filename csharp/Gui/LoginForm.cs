@@ -1,14 +1,16 @@
 using Business.Exception;
-using Business.Services;
+using Business.Services.Api;
 using Exceptions;
 
 namespace Gui
 {
     public partial class LoginForm : Form
     {
+        private IRallyApplicationServices _services;
         private MainViewForm mainViewForm;
-        public LoginForm()
+        public LoginForm(IRallyApplicationServices services)
         {
+            _services = services;
             InitializeComponent();
         }
 
@@ -21,13 +23,14 @@ namespace Gui
             {
                 try
                 {
-                    Services.UserService.LoginUser(username, password);
-
+                    _services.LoginUser(username, password);
                     ShowMainView();
+                    loginExceptionLabel.Text = "";
                 }
                 catch (AuthenticationException ex)
                 {
                     loginExceptionLabel.Text = ex.Message;
+                    loginExceptionLabel.Visible = true;
                 }
                 catch(ExceptionBaseClass ex)
                 {
@@ -40,7 +43,7 @@ namespace Gui
         {
             if (mainViewForm == null)
             {
-                mainViewForm = new MainViewForm(this);
+                mainViewForm = new MainViewForm(this, _services);
             }
             mainViewForm.Show();
             this.Hide();

@@ -5,6 +5,7 @@ using Repository.Interfaces;
 using Repository.Utils;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -50,11 +51,10 @@ namespace Repository.Database
         {
             log.Info("Adding participant: " + model.ToString());
 
-            var existingParticipant = FindParticipantByName(model.Name);
+            var existingParticipant = GetByName(model.Name);
             if (existingParticipant != null)
                 return existingParticipant;
 
-            Participant savedParticipant = null;
             try
             {
                 using (var connection = databaseUtils.GetConnection())
@@ -92,27 +92,30 @@ namespace Repository.Database
                             insertParticipantCommand.ExecuteNonQuery();
                             updateParticipantsNoCommand.ExecuteNonQuery();
                             transaction.Commit();
-                            savedParticipant = FindParticipantByName(model.Name);
+                            var addedParticipant = GetByName(model.Name);
+                            if (addedParticipant == null)
+                                throw new DatabaseException("Could't find after adding participant " + model);
+                            return addedParticipant;
                         }
-                        catch (Exception ex)
+                        catch (DbException ex)
                         {
                             transaction.Rollback();
-                            Console.WriteLine(ex.ToString());
+                            log.Error(ex.Message);
+                            throw new DatabaseException();
                         }
                     }
                 }
             }
-            catch(Exception ex)
+            catch(DbException ex)
             {
                 log.Error(ex.Message, ex);
+                throw new DatabaseException();
             }
-            return savedParticipant;
         }
 
-        public ICollection<Participant> FindMembersOfTeam(string teamName)
+        public ICollection<Participant> GetMembersOfTeam(string teamName)
         {
             log.Info("Searching for members of team " + teamName);
-            ICollection<Participant> participants = new List<Participant>();
             try
             {
                 using (var connection = databaseUtils.GetConnection())
@@ -126,25 +129,26 @@ namespace Repository.Database
                         command.Parameters.Add(teamNameParam);
                         command.CommandText = FIND_PARTICIPANTS_BY_TEAM_NAME_SQL_STRING;
 
+                        ICollection<Participant> participants = new List<Participant>();
                         using (var reader = command.ExecuteReader())
                         {
                             while (reader.Read())
                                 participants.Add(GetCurrentParticipantFromReader(reader));
                         }
+                        return participants;
                     }
                 }
             }
-            catch(Exception exception)
+            catch(DbException exception)
             {
                 log.Error(exception.Message, exception);
+                throw new DatabaseException("Error occured while searching for members of team " + teamName);
             }
 
-            return participants;
         }
-        public Participant FindParticipantByName(string participantName)
+        public Participant? GetByName(string participantName)
         {
             log.Info("Searching for participant by name " + participantName);
-            Participant existingParticipant = null;
 
             try
             {
@@ -163,26 +167,27 @@ namespace Repository.Database
                         using (var reader = command.ExecuteReader())
                         {
                             if (reader.Read())
-                                existingParticipant = GetCurrentParticipantFromReader(reader);
+                                return GetCurrentParticipantFromReader(reader);
+                            return null;
                         }
                     }
                 }
             }
-            catch (Exception exception)
+            catch (DbException exception)
             {
                 log.Error(exception.Message, exception);
+                throw new DatabaseException("Error occured while searching for participant by name" + participantName);
             }
-            return existingParticipant;
         }
 
 
-        public ICollection<Participant> FindAll()
+        public ICollection<Participant> GetAll()
         {
             throw new NotImplementedException();
         }
 
 
-        public Participant FindOne(long participantId)
+        public Participant? GetById(long participantId)
         {
             throw new NotImplementedException();
         }

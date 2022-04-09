@@ -9,6 +9,6 @@ namespace Repository.Interfaces
 {
     public interface ITeamRepository : IRepository<long, Team>
     {
-        Team FindTeamByName(String teamName);
+        Team? GetByName(String teamName);
     }
 }

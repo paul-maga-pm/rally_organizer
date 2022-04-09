@@ -2,6 +2,7 @@
 using log4net;
 using Repository.Interfaces;
 using Repository.Utils;
+using System.Data.Common;
 
 namespace Repository.Database
 {
@@ -26,7 +27,6 @@ namespace Repository.Database
         {
             log.Info("Adding user " + model.ToString());
 
-            User addedUser = null;
             try
             {
                 using (var connection = databaseUtils.GetConnection())
@@ -47,17 +47,20 @@ namespace Repository.Database
 
                     insertCommand.ExecuteNonQuery();
 
-                    addedUser = FindUserByUsername(model.UserName);
+                    User? addedUser = GetByUsername(model.UserName);
+                    if (addedUser == null)
+                        throw new DatabaseException("Couldn't add user " + addedUser);
+                    return addedUser;
                 }
             }
-            catch(Exception ex)
+            catch(DbException ex)
             {
                 log.Error(ex.ToString());
+                throw new DatabaseException("Error occured while adding user " + model);
             }
 
-            return addedUser;
         }
-        public User FindUserByUsername(string username)
+        public User? GetByUsername(string username)
         {
             try
             {
@@ -88,19 +91,19 @@ namespace Repository.Database
                     }
                 }
             } 
-            catch (Exception ex)
+            catch (DbException ex)
             {
                 log.Error(ex.Message);
-                return null;
+                throw new DatabaseException("Error occured when searching for user " + username);
             }
         }
 
-        public ICollection<User> FindAll()
+        public ICollection<User> GetAll()
         {
             throw new NotImplementedException();
         }
 
-        public User FindOne(long id)
+        public User GetById(long id)
         {
             throw new NotImplementedException();
         }

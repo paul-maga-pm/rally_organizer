@@ -1,21 +1,44 @@
 using Business.Services;
+using Business.Services.Api;
+using Business.Services.Implementation;
+using Repository.Database;
+using System.Configuration;
 
 namespace Gui
 {
     internal static class Program
     {
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
+
+        static IRallyApplicationServices InitializeServices()
+        {
+            String databaseConnectionString = ConfigurationManager.ConnectionStrings["RallyEventDb"].ConnectionString;
+            IDictionary<string, string> settings = new Dictionary<string, string>();
+
+            settings.Add("ConnectionString", databaseConnectionString);
+
+            var userRepo = new UserDatabaseRepository(settings);
+            var participantRepo = new ParticipantDatabaseRepository(settings);
+            var teamRepo = new TeamDatabaseRepository(settings);
+            var rallyRepo = new RallyDatabaseRepository(settings);
+
+            var userService = new UserService(userRepo);
+            var participantService = new ParticipantService(participantRepo);
+            var teamService = new TeamService(teamRepo);
+            var rallyService = new RallyService(rallyRepo);
+
+            var services = new RallyApplicationServicesImpl(userService, participantService, rallyService, teamService);
+
+            return services;
+        }
+
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
 
-            Services.InitializeServices();
             ApplicationConfiguration.Initialize();
-            Application.Run(new LoginForm());
+            
+            var services = InitializeServices();
+            Application.Run(new LoginForm(services));
         }
     }
 }

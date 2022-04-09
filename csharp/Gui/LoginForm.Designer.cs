@@ -34,7 +34,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.passwordTextBox = new System.Windows.Forms.TextBox();
             this.loginButton = new System.Windows.Forms.Button();
-            this.label4 = new System.Windows.Forms.Label();
             this.loginExceptionLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
@@ -91,15 +90,6 @@
             this.loginButton.UseVisualStyleBackColor = true;
             this.loginButton.Click += new System.EventHandler(this.loginButton_Click);
             // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(0, 0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(50, 20);
-            this.label4.TabIndex = 6;
-            this.label4.Text = "label4";
-            // 
             // loginExceptionLabel
             // 
             this.loginExceptionLabel.AutoSize = true;
@@ -116,7 +106,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(320, 416);
             this.Controls.Add(this.loginExceptionLabel);
-            this.Controls.Add(this.label4);
             this.Controls.Add(this.loginButton);
             this.Controls.Add(this.passwordTextBox);
             this.Controls.Add(this.label3);
@@ -139,7 +128,6 @@
         private Label label3;
         private TextBox passwordTextBox;
         private Button loginButton;
-        private Label label4;
         private Label loginExceptionLabel;
     }
 }

@@ -4,6 +4,7 @@ using Repository.Interfaces;
 using Repository.Utils;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,11 +26,9 @@ namespace Repository.Database
             databaseUtils = new DatabaseUtils(databaseConnectionProperties);
             log.Info("Team database repository created!");
         }
-        public Team FindTeamByName(string teamName)
+        public Team? GetByName(string teamName)
         {
             log.Info("Searching for team by name " + teamName);
-
-            Team foundTeam = null;
 
             try
             {
@@ -50,28 +49,28 @@ namespace Repository.Database
                         {
                             long teamId = reader.GetInt64(0);
                             String existingName = reader.GetString(1);
-                            foundTeam = new Team(existingName);
+                            Team foundTeam = new Team(existingName);
                             foundTeam.Id = teamId;
+                            return foundTeam;
                         }
+                        else return null;
                     }
                 }
             }
-            catch (Exception ex)
+            catch (DbException ex)
             {
                 log.Error(ex.Message, ex);
+                throw new DatabaseException("Error occured while searching for team with name " + teamName);
             }
-            return foundTeam;
         }
 
         public Team Add(Team model)
         {
             log.Info("Adding new team " + model.ToString());
             
-            var existingTeam = FindTeamByName(model.TeamName);
+            var existingTeam = GetByName(model.TeamName);
             if (existingTeam != null)
                 return existingTeam;
-
-            Team addedTeam = null;
 
             try
             {
@@ -86,17 +85,20 @@ namespace Repository.Database
                     command.Parameters.Add(teamNameParam);
                     command.ExecuteNonQuery();
 
-                    addedTeam = FindTeamByName(model.TeamName);
+                    var addedTeam = GetByName(model.TeamName);
+                    if (addedTeam == null)
+                        throw new DatabaseException("Error occured while adding team " + model);
+                    return addedTeam;
                 }
             }
-            catch(Exception ex)
+            catch(DbException ex)
             {
                 log.Error(ex.Message, ex);
+                throw new DatabaseException("Error occured while adding team " + model);
             }
-            return addedTeam;
         }
 
-        public ICollection<Team> FindAll()
+        public ICollection<Team> GetAll()
         {
             try
             {
@@ -105,10 +107,10 @@ namespace Repository.Database
                 {
                     command.CommandText = "select team_id, team_name from teams";
                     
-                    var allTeams = new List<Team>();
 
                     using(var reader = command.ExecuteReader())
                     {
+                        var allTeams = new List<Team>();
                         while(reader.Read())
                         {
                             long teamId = reader.GetInt64(0);
@@ -117,18 +119,18 @@ namespace Repository.Database
                             team.Id = teamId;
                             allTeams.Add(team);
                         }
+                        return allTeams;
                     }
-                    return allTeams;
                 }   
             }
-            catch(Exception ex)
+            catch(DbException ex)
             {
                 log.Error(ex);
+                throw new DatabaseException("Error occured while searching for all teams");
             }
-            return null;
         }
 
-        public Team FindOne(long id)
+        public Team GetById(long id)
         {
             throw new NotImplementedException();
         }

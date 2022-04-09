@@ -27,12 +27,12 @@ namespace Business.Services
 
         public ICollection<Team> GetAllTeams()
         {
-            return teamRepository.FindAll();
+            return teamRepository.GetAll();
         }
 
-        public Team FindTeamByName(String teamName)
+        public Team? GetTeamByName(String teamName)
         {
-            return teamRepository.FindTeamByName(teamName); 
+            return teamRepository.GetByName(teamName); 
         }
     }
 }

@@ -45,125 +45,97 @@ public class ParticipantDatabaseRepository implements ParticipantRepository {
 
     @Override
     public Participant save(Participant participant) {
-        Function<Participant, Participant> saveParticipantFunction = model -> {
-            log.traceEntry("Saving participant {}");
+        log.traceEntry("Saving participant {}");
 
-            var existingParticipantOptional = getParticipantByName(model.getParticipantName());
-            if (existingParticipantOptional.isPresent()) {
-                var existingParticipant = existingParticipantOptional.get();
-                log.traceExit("Participant with equal name already exists: {}", existingParticipant);
-                return existingParticipant;
-            }
+        var existingParticipantOptional = getParticipantByName(participant.getParticipantName());
+        if (existingParticipantOptional.isPresent()) {
+            var existingParticipant = existingParticipantOptional.get();
+            log.traceExit("Participant with equal name already exists: {}", existingParticipant);
+            return existingParticipant;
+        }
 
-            try(Connection connection = jdbcUtils.getConnection()) {
-                try(PreparedStatement insertParticipantPreparedStatement =
-                            connection.prepareStatement(INSERT_PARTICIPANT_SQL_STRING, Statement.RETURN_GENERATED_KEYS);
-                    PreparedStatement incrementNumberOfParticipantsForRallyPreparedStatement =
-                            connection.prepareStatement(INCREMENT_NUMBER_OF_PARTICIPANTS_FOR_RALLY_SQL_STRING)) {
+        try(Connection connection = jdbcUtils.getConnection()) {
+            try(PreparedStatement insertParticipantPreparedStatement =
+                        connection.prepareStatement(INSERT_PARTICIPANT_SQL_STRING, Statement.RETURN_GENERATED_KEYS);
+                PreparedStatement incrementNumberOfParticipantsForRallyPreparedStatement =
+                        connection.prepareStatement(INCREMENT_NUMBER_OF_PARTICIPANTS_FOR_RALLY_SQL_STRING)) {
 
-                    log.info("Starting inserting participant transaction...");
-                    connection.setAutoCommit(false);
+                log.info("Starting inserting participant transaction...");
+                connection.setAutoCommit(false);
 
-                    insertParticipantPreparedStatement.setString(1, model.getParticipantName());
-                    insertParticipantPreparedStatement.setLong(2,model.getTeam().getId());
-                    insertParticipantPreparedStatement.setLong(3, model.getRally().getId());
-                    incrementNumberOfParticipantsForRallyPreparedStatement.setLong(1, model.getRally().getId());
+                insertParticipantPreparedStatement.setString(1, participant.getParticipantName());
+                insertParticipantPreparedStatement.setLong(2,participant.getTeam().getId());
+                insertParticipantPreparedStatement.setLong(3, participant.getRally().getId());
+                incrementNumberOfParticipantsForRallyPreparedStatement.setLong(1, participant.getRally().getId());
 
-                    insertParticipantPreparedStatement.executeUpdate();
-                    incrementNumberOfParticipantsForRallyPreparedStatement.executeUpdate();
+                insertParticipantPreparedStatement.executeUpdate();
+                incrementNumberOfParticipantsForRallyPreparedStatement.executeUpdate();
 
-                    connection.commit();
+                connection.commit();
 
-                    log.info("Transaction has been committed!");
-                    var addedParticipant = getParticipantByName(participant.getParticipantName());
+                log.info("Transaction has been committed!");
+                var addedParticipant = getParticipantByName(participant.getParticipantName());
 
-                    if (addedParticipant.isEmpty())
-                        throw new SQLException();
+                if (addedParticipant.isEmpty())
+                    throw new SQLException();
 
-                    return addedParticipant.get();
-                } catch (SQLException exception) {
-                    log.error(exception);
-                    connection.rollback();
-                }
+                return addedParticipant.get();
             } catch (SQLException exception) {
                 log.error(exception);
+                connection.rollback();
+                throw new DatabaseException("DatabaseException occurred while saving participant " + participant);
             }
-            log.error("Couldn't create participant {}. Returning null", model);
-            log.traceExit();
-            return null;
-        };
-        var savedParticipant = saveParticipantFunction.apply(participant);
-
-        if (savedParticipant == null)
+        } catch (SQLException exception) {
+            log.error(exception);
             throw new DatabaseException("DatabaseException occurred while saving participant " + participant);
-        return savedParticipant;
+        }
     }
 
     @Override
     public Collection<Participant> getMembersOfTeam(String teamName) {
-        Function<String, Collection<Participant>> findMembersOfTeamFunction = team -> {
+        log.traceEntry("Searching for participants in team {}", teamName);
+        List<Participant> participantsInTeam = new ArrayList<>();
 
-            log.traceEntry("Searching for participants in team {}", teamName);
-            List<Participant> participantsInTeam = new ArrayList<>();
+        try (Connection connection = jdbcUtils.getConnection();
+             PreparedStatement findByTeamNamePreparedStatement = connection.prepareStatement(FIND_PARTICIPANTS_BY_TEAM_NAME_SQL_STRING)) {
+            findByTeamNamePreparedStatement.setString(1, teamName);
 
-            try (Connection connection = jdbcUtils.getConnection();
-                 PreparedStatement findByTeamNamePreparedStatement = connection.prepareStatement(FIND_PARTICIPANTS_BY_TEAM_NAME_SQL_STRING)) {
-                findByTeamNamePreparedStatement.setString(1, teamName);
-
-                try (ResultSet resultSet = findByTeamNamePreparedStatement.executeQuery()) {
-                    while (resultSet.next()) {
-                        Participant participant = getCurrentParticipantFromResultSet(resultSet);
-                        participantsInTeam.add(participant);
-                    }
-                    log.info("Returning found members...");
-                    log.traceExit();
-                    return participantsInTeam;
+            try (ResultSet resultSet = findByTeamNamePreparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    Participant participant = getCurrentParticipantFromResultSet(resultSet);
+                    participantsInTeam.add(participant);
                 }
-            } catch (SQLException e) {
-                log.error(e);
+                log.info("Returning found members...");
+                log.traceExit();
+                return participantsInTeam;
             }
-            log.error("Error occurred while searching for members. Returning null list");
-            return null;
-        };
-
-        var members = findMembersOfTeamFunction.apply(teamName);
-
-        if (members == null)
+        } catch (SQLException e) {
+            log.error(e);
             throw new DatabaseException("DatabaseException occurred while searching for members of team " + teamName);
+        }
 
-        return members;
     }
 
     @Override
     public Optional<Participant> getParticipantByName(String participantName) {
-        Function<String, Optional<Participant>> findParticipantByNameFunction = name -> {
-            log.traceEntry("Searching for participant with name {}", participantName);
+        log.traceEntry("Searching for participant with name {}", participantName);
 
-            try (Connection connection = jdbcUtils.getConnection();
-                 PreparedStatement findByParticipantNamePreparedStatement = connection.prepareStatement(FIND_PARTICIPANT_BY_NAME_SQL_STRING)) {
-                findByParticipantNamePreparedStatement.setString(1, participantName);
-                try (ResultSet resultSet = findByParticipantNamePreparedStatement.executeQuery()) {
-                    if (resultSet.next()) {
-                        var participant = getCurrentParticipantFromResultSet(resultSet);
-                        log.info("Returning participant {}", participant);
-                        log.traceExit();
-                        return Optional.of(participant);
-                    } else
-                        return Optional.empty();
-                }
-            } catch (SQLException exception) {
-                log.error(exception);
+        try (Connection connection = jdbcUtils.getConnection();
+             PreparedStatement findByParticipantNamePreparedStatement = connection.prepareStatement(FIND_PARTICIPANT_BY_NAME_SQL_STRING)) {
+            findByParticipantNamePreparedStatement.setString(1, participantName);
+            try (ResultSet resultSet = findByParticipantNamePreparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    var participant = getCurrentParticipantFromResultSet(resultSet);
+                    log.info("Returning participant {}", participant);
+                    log.traceExit();
+                    return Optional.of(participant);
+                } else
+                    return Optional.empty();
             }
-            log.error("Error while searching for participant with name {}", participantName);
-            return null;
-        };
-
-        var foundParticipant = findParticipantByNameFunction.apply(participantName);
-
-        if (foundParticipant == null)
+        } catch (SQLException exception) {
+            log.error(exception);
             throw new DatabaseException("DatabaseException occurred while searching for participant with name " + participantName);
-
-        return foundParticipant;
+        }
     }
 
     @Override

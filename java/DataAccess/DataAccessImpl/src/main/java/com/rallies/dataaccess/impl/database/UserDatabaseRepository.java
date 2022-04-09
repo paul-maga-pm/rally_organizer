@@ -29,85 +29,66 @@ public class UserDatabaseRepository implements UserRepository {
 
     @Override
     public User save(User model) {
-        Function<User, User> saveUserFunction = user -> {
-            log.traceEntry("Adding new user " + model);
+        log.traceEntry("Adding new user " + model);
 
-            var existingUserOptional = getUserByUsername(model.getUserName());
-            if (existingUserOptional.isPresent()) {
-                log.info("User {} already exists", model.getUserName());
-                log.traceExit();
-                return existingUserOptional.get();
-            }
-
-            try (var connection = utils.getConnection();
-                 var insertPreparedStatement = connection.prepareStatement(INSERT_USER_SQL_STRING, Statement.RETURN_GENERATED_KEYS)) {
-
-                insertPreparedStatement.setString(1, model.getUserName());
-                insertPreparedStatement.setString(2, model.getPassword());
-
-                insertPreparedStatement.executeUpdate();
-
-                try (var generatedKeys = insertPreparedStatement.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        User addedUser = new User(model);
-                        addedUser.setId(generatedKeys.getLong(1));
-                        log.info("Added user {}", addedUser.getUserName());
-                        return addedUser;
-                    }
-                }
-            } catch (SQLException exception) {
-                log.error(exception);
-            }
+        var existingUserOptional = getUserByUsername(model.getUserName());
+        if (existingUserOptional.isPresent()) {
+            log.info("User {} already exists", model.getUserName());
             log.traceExit();
-            return null;
-        };
+            return existingUserOptional.get();
+        }
 
-        var savedUser = saveUserFunction.apply(model);
+        try (var connection = utils.getConnection();
+             var insertPreparedStatement = connection.prepareStatement(INSERT_USER_SQL_STRING, Statement.RETURN_GENERATED_KEYS)) {
 
-        if (savedUser == null)
-            throw new DatabaseException("DatabaseException occurred while saving user {} " +  model.getUserName());
+            insertPreparedStatement.setString(1, model.getUserName());
+            insertPreparedStatement.setString(2, model.getPassword());
 
-        return savedUser;
+            insertPreparedStatement.executeUpdate();
+
+            try (var generatedKeys = insertPreparedStatement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    User addedUser = new User(model);
+                    addedUser.setId(generatedKeys.getLong(1));
+                    log.info("Added user {}", addedUser.getUserName());
+                    return addedUser;
+                } else throw new DatabaseException("DatabaseException occurred while searching for the generated id for user" + model);
+
+            }
+        } catch (SQLException exception) {
+            log.error(exception);
+            throw new DatabaseException("DatabaseException occurred while saving user " + model);
+        }
     }
 
     @Override
     public Optional<User> getUserByUsername(String username) {
-        Function<String, Optional<User>> findUserFunction = usrname -> {
-            log.traceEntry("Searching for user with username {}", username);
-            try (var connection = utils.getConnection();
-                 var findPreparedStatement = connection.prepareStatement(FIND_BY_USERNAME_SQL_STRING)) {
+        log.traceEntry("Searching for user with username {}", username);
+        try (var connection = utils.getConnection();
+             var findPreparedStatement = connection.prepareStatement(FIND_BY_USERNAME_SQL_STRING)) {
 
-                findPreparedStatement.setString(1, username);
+            findPreparedStatement.setString(1, username);
 
-                try (var resultSet = findPreparedStatement.executeQuery()) {
-                    if (resultSet.next()) {
-                        var userId = resultSet.getLong(1);
-                        var existingUsername = resultSet.getString(2);
-                        var password = resultSet.getString(3);
-                        User user = new User(existingUsername, password);
-                        user.setId(userId);
-                        log.info("Found user");
-                        log.traceExit();
-                        return Optional.of(user);
-                    } else {
-                        log.info("User not found");
-                        log.traceExit();
-                        return Optional.empty();
-                    }
+            try (var resultSet = findPreparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    var userId = resultSet.getLong(1);
+                    var existingUsername = resultSet.getString(2);
+                    var password = resultSet.getString(3);
+                    User user = new User(existingUsername, password);
+                    user.setId(userId);
+                    log.info("Found user");
+                    log.traceExit();
+                    return Optional.of(user);
+                } else {
+                    log.info("User not found");
+                    log.traceExit();
+                    return Optional.empty();
                 }
-            } catch (SQLException exception) {
-                log.error(exception);
             }
-            log.traceExit();
-            return null;
-        };
-
-        var foundUserOptional = findUserFunction.apply(username);
-
-        if (foundUserOptional == null)
+        } catch (SQLException exception) {
+            log.error(exception);
             throw new DatabaseException("DatabaseException occurred while searching for user with username " + username);
-
-        return foundUserOptional;
+        }
     }
 
     @Override
